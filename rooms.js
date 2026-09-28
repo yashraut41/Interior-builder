@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { rooms, WALL_HEIGHT, WALL_THICKNESS } from "./roomData.js";
+import { rooms, WALL_HEIGHT, WALL_THICKNESS, OPENING_TYPES } from "./roomData.js";
 
 const FLOOR_COLOR = 0xcdc2ad;
 const OPEN_FLOOR_COLOR = 0xbdb199;
@@ -8,48 +8,110 @@ const WALL_COLOR = 0xeae5d9;
 const CEILING_COLOR = 0xf2efe8;
 
 /**
- * Build the wall segment(s) along one side of a room's footprint, leaving a
- * gap where `opening` says there should be one. No door or window mesh is
- * ever created — an opening is simply missing wall.
+ * How far a wall may sit from an opening's line and still be cut by it.
+ * Two rooms sharing a partition each build their own wall, a wall-thickness
+ * (or up to ~9" where tracing is loose) apart — both must get the gap.
  */
-function buildWallSide({ side, x1, x2, z1, z2, opening, material }) {
+const OPENING_REACH = 0.3;
+
+/** Wall pieces shorter than this (~3") are tracing slivers — dropped. */
+const MIN_WALL_PIECE = 0.075;
+
+function roomBounds(room) {
+  return {
+    x1: room.x - room.width / 2,
+    x2: room.x + room.width / 2,
+    z1: room.z - room.depth / 2,
+    z2: room.z + room.depth / 2,
+  };
+}
+
+/**
+ * Every opening in the flat as a world-space cut: an interval along X
+ * (horizontal walls) or Z (vertical walls) on a fixed line.
+ */
+function collectCuts() {
+  const cuts = [];
+  for (const room of rooms) {
+    const { x1, x2, z1, z2 } = roomBounds(room);
+    for (const o of room.openings || []) {
+      const horizontal = o.side === "north" || o.side === "south";
+      const line = { north: z1, south: z2, west: x1, east: x2 }[o.side];
+      const start = (horizontal ? x1 : z1) + o.offset;
+      cuts.push({
+        horizontal,
+        line,
+        start,
+        end: start + o.width,
+        height: OPENING_TYPES[o.type].height,
+      });
+    }
+  }
+  return cuts;
+}
+
+const cuts = collectCuts();
+
+function wallBox(material, length, height, isHorizontal) {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(
+      isHorizontal ? length : WALL_THICKNESS,
+      height,
+      isHorizontal ? WALL_THICKNESS : length
+    ),
+    material
+  );
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
+}
+
+/**
+ * Build the wall along one side of a room's footprint, leaving gaps for any
+ * opening that lies on this line. No door or window mesh is ever created —
+ * an opening is simply missing wall, with a lintel above if it stops short
+ * of the ceiling.
+ */
+function buildWallSide({ side, x1, x2, z1, z2, material }) {
   const meshes = [];
   const isHorizontal = side === "north" || side === "south"; // runs along X
+  const origin = isHorizontal ? x1 : z1;
   const length = isHorizontal ? x2 - x1 : z2 - z1;
-  const fixedZ = side === "north" ? z1 : side === "south" ? z2 : null;
-  const fixedX = side === "west" ? x1 : side === "east" ? x2 : null;
+  const fixed = { north: z1, south: z2, west: x1, east: x2 }[side];
 
-  const segments = [];
-  if (opening) {
-    const gapStart = THREE.MathUtils.clamp(opening.offset, 0, length);
-    const gapEnd = THREE.MathUtils.clamp(opening.offset + opening.width, 0, length);
-    if (gapStart > 0.001) segments.push([0, gapStart]);
-    if (gapEnd < length - 0.001) segments.push([gapEnd, length]);
-  } else {
-    segments.push([0, length]);
+  // Gaps on this wall, in local coordinates, sorted along the wall
+  const gaps = cuts
+    .filter((c) => c.horizontal === isHorizontal && Math.abs(c.line - fixed) <= OPENING_REACH)
+    .map((c) => ({
+      start: THREE.MathUtils.clamp(c.start - origin, 0, length),
+      end: THREE.MathUtils.clamp(c.end - origin, 0, length),
+      height: c.height,
+    }))
+    .filter((g) => g.end - g.start > 0.001)
+    .sort((a, b) => a.start - b.start);
+
+  const place = (mesh, mid, y) => {
+    if (isHorizontal) mesh.position.set(origin + mid, y, fixed);
+    else mesh.position.set(fixed, y, origin + mid);
+    meshes.push(mesh);
+  };
+
+  // Full-height pieces between gaps
+  let cursor = 0;
+  for (const g of [...gaps, { start: length, end: length }]) {
+    const piece = g.start - cursor;
+    if (piece >= MIN_WALL_PIECE) {
+      place(wallBox(material, piece, WALL_HEIGHT, isHorizontal), cursor + piece / 2, WALL_HEIGHT / 2);
+    }
+    cursor = Math.max(cursor, g.end);
   }
 
-  for (const [start, end] of segments) {
-    const segLength = end - start;
-    if (segLength <= 0.001) continue;
-
-    const geometry = new THREE.BoxGeometry(
-      isHorizontal ? segLength : WALL_THICKNESS,
-      WALL_HEIGHT,
-      isHorizontal ? WALL_THICKNESS : segLength
-    );
-    const mesh = new THREE.Mesh(geometry, material);
-    const mid = start + segLength / 2;
-
-    if (isHorizontal) {
-      mesh.position.set(x1 + mid, WALL_HEIGHT / 2, fixedZ);
-    } else {
-      mesh.position.set(fixedX, WALL_HEIGHT / 2, z1 + mid);
-    }
-
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    meshes.push(mesh);
+  // Lintels above doors and plain openings
+  for (const g of gaps) {
+    const h = WALL_HEIGHT - g.height;
+    if (h <= 0.001) continue;
+    const w = g.end - g.start;
+    place(wallBox(material, w, h, isHorizontal), g.start + w / 2, g.height + h / 2);
   }
 
   return meshes;
@@ -69,10 +131,7 @@ export function buildRoomGroup(room) {
   const group = new THREE.Group();
   group.name = room.id;
 
-  const x1 = room.x - room.width / 2;
-  const x2 = room.x + room.width / 2;
-  const z1 = room.z - room.depth / 2;
-  const z2 = room.z + room.depth / 2;
+  const { x1, x2, z1, z2 } = roomBounds(room);
 
   // Floor
   const floor = new THREE.Mesh(
@@ -91,9 +150,6 @@ export function buildRoomGroup(room) {
       roughness: 0.95,
     });
 
-    const openingsBySide = {};
-    for (const o of room.openings || []) openingsBySide[o.side] = o;
-
     for (const side of ["north", "south", "east", "west"]) {
       buildWallSide({
         side,
@@ -101,7 +157,6 @@ export function buildRoomGroup(room) {
         x2,
         z1,
         z2,
-        opening: openingsBySide[side] || null,
         material: wallMaterial,
       }).forEach((m) => group.add(m));
     }

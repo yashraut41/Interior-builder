@@ -33,7 +33,7 @@ against the original plan to sanity-check room positions.
 | Bhagyesh Room | 11'6" x 10'11" | room |
 | Kitchen | 7'10" x 11'7" | room |
 | Entrance Lobby | 4'0" x 5'1" | room |
-| Toilet (Parents) | 7'10" x 4'6" | room |
+| Toilet (Yash) | 7'10" x 4'6" | room |
 | Common Toilet | 8'0" x 4'6" | room |
 | Toilet (Bhagyesh) | 8'0" x 4'7" | room |
 | Balcony (Living) | 6'6" x 6'7" | outdoor — walls, no ceiling |
@@ -50,10 +50,10 @@ Ceilings exist only on `room` zones, and are hidden in dollhouse view.
 CONTEXT.md           — project decisions, read first
 index.html           — page shell + UI overlay
 layout-check.svg     — top-down layout verification diagram
-src/style.css        — all styling
-src/roomData.js      — floor plan data model (single source of truth)
-src/rooms.js         — turns roomData.js into Three.js geometry
-src/main.js          — scene, dollhouse controls, hotspots, pano mode
+style.css        — all styling
+roomData.js      — floor plan data model (single source of truth)
+rooms.js         — turns roomData.js into Three.js geometry
+main.js          — scene, dollhouse controls, hotspots, pano mode
 ```
 
 ## Moving to Claude Code

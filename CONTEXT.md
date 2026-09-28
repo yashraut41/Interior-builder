@@ -24,7 +24,7 @@ Accuracy matters, but nobody is ordering joinery off this.
 ## Decisions already made
 
 - **Shell in code, furniture in Blender.** Walls/floors/ceilings are generated
-  from numbers in `src/roomData.js`. Change a dimension, everything updates.
+  from numbers in `roomData.js`. Change a dimension, everything updates.
   Do NOT bake the shell into a mesh file. Furniture will come later as glTF/GLB
   imports (downloaded models or modelled in Blender).
 - **Vanilla JS + Three.js + Vite.** Hobby project. Flat file structure, no
@@ -40,8 +40,23 @@ Accuracy matters, but nobody is ordering joinery off this.
 
 ## Current state
 
-Shell only. Every room is a sealed box at its plan dimensions. No openings
-anywhere yet — that is intentional and is the next step.
+Shell with openings, from the owner's colour-coded markup of
+`floor-plan.svg` (2026-09-28):
+
+- **glass** — floor-to-ceiling sliding glass panes (red on the markup)
+- **door** — ordinary wooden door, wall continues above 7' (green)
+- **opening** — bare opening, no door, lintel at 7' (blue)
+
+Each opening is listed once in `roomData.js` and cuts every wall on its line,
+so shared partitions get the gap on both rooms' walls. Sizes are standard
+(3'-0" bedroom, 2'-6" toilet, 3'-6" main door) placed from the markup, not
+measured.
+
+The toilet between Parents Room and Yash Room belongs to **Yash Room**
+(`toilet_yash`), entered from Yash Room, not the passage.
+
+`node plan.js` regenerates `floor-plan.svg` from `roomData.js` — the 2D check
+drawing for layout and openings.
 
 ## Accuracy status
 
@@ -57,10 +72,7 @@ anywhere yet — that is intentional and is the next step.
 
 ## Immediate next step
 
-The owner marks up a screenshot of the shell showing where windows, doors and
-openings actually go, which walls are full glass, and where the balconies and
-dry balcony open. Then openings get cut into `roomData.js`. Wait for that
-markup — don't guess openings.
+Owner reviews openings in the walkthrough, then wall colour controls.
 
 ## Planned after that
 
@@ -73,7 +85,7 @@ Functionality first, realism last. That order was chosen deliberately.
 
 ## Working notes
 
-- `src/roomData.js` is the single source of truth. If the layout is wrong,
+- `roomData.js` is the single source of truth. If the layout is wrong,
   that's the only file to fix.
 - Dimensions are authored in feet/inches via `ft()` and stored in metres.
 - The owner knows 3D well (3ds Max background), so explanations can assume

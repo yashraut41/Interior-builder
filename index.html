@@ -1,20 +1,31 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flat Walkthrough</title>
-    <link rel="stylesheet" href="/src/style.css" />
-  </head>
-  <body>
-    <div id="app"></div>
 
-    <div id="ui">
-      <button id="back-btn" class="hidden">&larr; Dollhouse view</button>
-      <div id="room-label" class="hidden"></div>
-      <div id="hint">Click a hotspot to walk in. Drag to look around.</div>
-    </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flat Walkthrough</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
 
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<body>
+  <div id="app"></div>
+
+  <div id="ui">
+    <button id="back-btn" class="hidden">&larr; Dollhouse view</button>
+    <div id="room-label" class="hidden"></div>
+    <div id="hint">Click a hotspot to walk in. Drag to look around.</div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+
 </html>
