@@ -10,6 +10,7 @@ import { buildAllRooms, getFlatBounds } from "./rooms.js";
 const appEl = document.getElementById("app");
 const backBtn = document.getElementById("back-btn");
 const roomLabelEl = document.getElementById("room-label");
+const exportBtn = document.getElementById("export-btn");
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xdcd8ce);
@@ -133,6 +134,25 @@ function exitPanoMode() {
 }
 
 backBtn.addEventListener("click", exitPanoMode);
+
+// ---------------------------------------------------------------------------
+// Export — the architecture only (no hotspots, ceilings shown) as three.js
+// JSON. Open in the three.js editor with File -> Import. Units: metres, Y up.
+// ---------------------------------------------------------------------------
+
+exportBtn.addEventListener("click", () => {
+  const flat = new THREE.Group();
+  flat.name = "flat_option1";
+  buildAllRooms(flat);
+
+  const json = JSON.stringify(flat.toJSON());
+  const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "flat.json";
+  a.click();
+  URL.revokeObjectURL(url);
+});
 
 // ---------------------------------------------------------------------------
 // Camera transition tween

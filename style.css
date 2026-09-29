@@ -36,7 +36,8 @@ html, body {
   gap: 8px;
 }
 
-#back-btn {
+#back-btn,
+#export-btn {
   pointer-events: auto;
   background: rgba(20, 20, 20, 0.75);
   color: #fff;
@@ -47,7 +48,8 @@ html, body {
   cursor: pointer;
 }
 
-#back-btn:hover {
+#back-btn:hover,
+#export-btn:hover {
   background: rgba(40, 40, 40, 0.85);
 }
 

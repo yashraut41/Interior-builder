@@ -8,12 +8,13 @@ const OUTDOOR_FLOOR_COLOR = 0xa8a294;
 const WALL_COLOR = 0xeae5d9;
 const CEILING_COLOR = 0xf2efe8;
 
-function wallBox(material, r, y0, y1) {
+function wallBox(material, r, y0, y1, name) {
   const mesh = new THREE.Mesh(
     new THREE.BoxGeometry(r.x1 - r.x0, y1 - y0, r.z1 - r.z0),
     material
   );
   mesh.position.set((r.x0 + r.x1) / 2, (y0 + y1) / 2, (r.z0 + r.z1) / 2);
+  mesh.name = name;
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   return mesh;
@@ -31,18 +32,22 @@ function buildWalls() {
   const wallMaterial = new THREE.MeshStandardMaterial({ color: WALL_COLOR, roughness: 0.95 });
   const thresholdMaterial = new THREE.MeshStandardMaterial({ color: FLOOR_COLOR, roughness: 0.9 });
 
-  for (const r of wallRects) group.add(wallBox(wallMaterial, r, 0, WALL_HEIGHT));
+  wallMaterial.name = "wall";
+  thresholdMaterial.name = "threshold";
+  wallRects.forEach((r, i) => group.add(wallBox(wallMaterial, r, 0, WALL_HEIGHT, `wall_${i}`)));
 
-  for (const r of openingRects) {
+  openingRects.forEach((r, i) => {
+    const tag = `${r.opening.room.id}_${r.opening.side}_${r.opening.type}`;
     if (r.opening.height < WALL_HEIGHT - 0.001) {
-      group.add(wallBox(wallMaterial, r, r.opening.height, WALL_HEIGHT));
+      group.add(wallBox(wallMaterial, r, r.opening.height, WALL_HEIGHT, `lintel_${tag}_${i}`));
     }
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(r.x1 - r.x0, r.z1 - r.z0), thresholdMaterial);
     floor.rotation.x = -Math.PI / 2;
     floor.position.set((r.x0 + r.x1) / 2, 0, (r.z0 + r.z1) / 2);
+    floor.name = `threshold_${tag}_${i}`;
     floor.receiveShadow = true;
     group.add(floor);
-  }
+  });
 
   return group;
 }
@@ -68,6 +73,7 @@ export function buildRoomGroup(room) {
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(room.x, 0, room.z);
+  floor.name = `${room.id}_floor`;
   floor.receiveShadow = true;
   group.add(floor);
 

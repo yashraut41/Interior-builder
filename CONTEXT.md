@@ -68,6 +68,10 @@ sliding panels on tracks, dashed heads over bare openings, chain + overall
 dimension strings, door/window marks with a schedule, north arrow, graphic
 scale, title block. Never the owner's colour-coded markup convention.
 
+**Export**: the "Export flat.json" button writes the architecture (floors,
+walls, lintels, thresholds, ceilings — no hotspots) via `Object3D.toJSON()`.
+Open in the three.js editor with File -> Import. Metres, Y up, -Z north.
+
 ## Accuracy status
 
 - Room **widths and depths** — read off the printed plan dimensions. Trust them.
