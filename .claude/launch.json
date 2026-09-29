@@ -4,7 +4,10 @@
     {
       "name": "walkthrough",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5173"],
+      "runtimeArgs": [
+        "-c",
+        "import http.server as h\nclass H(h.SimpleHTTPRequestHandler):\n    def end_headers(self):\n        self.send_header('Cache-Control', 'no-store')\n        super().end_headers()\nh.ThreadingHTTPServer(('', 5173), H).serve_forever()"
+      ],
       "port": 5173
     }
   ]

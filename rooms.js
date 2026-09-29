@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { rooms, WALL_HEIGHT, WALL_THICKNESS, OPENING_TYPES } from "./roomData.js";
+import { rooms, WALL_HEIGHT } from "./roomData.js";
+import { wallRects, openingRects } from "./walls.js";
 
 const FLOOR_COLOR = 0xcdc2ad;
 const OPEN_FLOOR_COLOR = 0xbdb199;
@@ -7,114 +8,43 @@ const OUTDOOR_FLOOR_COLOR = 0xa8a294;
 const WALL_COLOR = 0xeae5d9;
 const CEILING_COLOR = 0xf2efe8;
 
-/**
- * How far a wall may sit from an opening's line and still be cut by it.
- * Two rooms sharing a partition each build their own wall, a wall-thickness
- * (or up to ~9" where tracing is loose) apart — both must get the gap.
- */
-const OPENING_REACH = 0.3;
-
-/** Wall pieces shorter than this (~3") are tracing slivers — dropped. */
-const MIN_WALL_PIECE = 0.075;
-
-function roomBounds(room) {
-  return {
-    x1: room.x - room.width / 2,
-    x2: room.x + room.width / 2,
-    z1: room.z - room.depth / 2,
-    z2: room.z + room.depth / 2,
-  };
-}
-
-/**
- * Every opening in the flat as a world-space cut: an interval along X
- * (horizontal walls) or Z (vertical walls) on a fixed line.
- */
-function collectCuts() {
-  const cuts = [];
-  for (const room of rooms) {
-    const { x1, x2, z1, z2 } = roomBounds(room);
-    for (const o of room.openings || []) {
-      const horizontal = o.side === "north" || o.side === "south";
-      const line = { north: z1, south: z2, west: x1, east: x2 }[o.side];
-      const start = (horizontal ? x1 : z1) + o.offset;
-      cuts.push({
-        horizontal,
-        line,
-        start,
-        end: start + o.width,
-        height: OPENING_TYPES[o.type].height,
-      });
-    }
-  }
-  return cuts;
-}
-
-const cuts = collectCuts();
-
-function wallBox(material, length, height, isHorizontal) {
+function wallBox(material, r, y0, y1) {
   const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(
-      isHorizontal ? length : WALL_THICKNESS,
-      height,
-      isHorizontal ? WALL_THICKNESS : length
-    ),
+    new THREE.BoxGeometry(r.x1 - r.x0, y1 - y0, r.z1 - r.z0),
     material
   );
+  mesh.position.set((r.x0 + r.x1) / 2, (y0 + y1) / 2, (r.z0 + r.z1) / 2);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   return mesh;
 }
 
 /**
- * Build the wall along one side of a room's footprint, leaving gaps for any
- * opening that lies on this line. No door or window mesh is ever created —
- * an opening is simply missing wall, with a lintel above if it stops short
- * of the ceiling.
+ * All walls of the flat, from walls.js. Walls are shared between rooms, so
+ * they are built once for the whole flat rather than per room. No door or
+ * window mesh is ever created — an opening is missing wall, with a lintel
+ * above if it stops short of the ceiling, and floor across the threshold.
  */
-function buildWallSide({ side, x1, x2, z1, z2, material }) {
-  const meshes = [];
-  const isHorizontal = side === "north" || side === "south"; // runs along X
-  const origin = isHorizontal ? x1 : z1;
-  const length = isHorizontal ? x2 - x1 : z2 - z1;
-  const fixed = { north: z1, south: z2, west: x1, east: x2 }[side];
+function buildWalls() {
+  const group = new THREE.Group();
+  group.name = "walls";
+  const wallMaterial = new THREE.MeshStandardMaterial({ color: WALL_COLOR, roughness: 0.95 });
+  const thresholdMaterial = new THREE.MeshStandardMaterial({ color: FLOOR_COLOR, roughness: 0.9 });
 
-  // Gaps on this wall, in local coordinates, sorted along the wall
-  const gaps = cuts
-    .filter((c) => c.horizontal === isHorizontal && Math.abs(c.line - fixed) <= OPENING_REACH)
-    .map((c) => ({
-      start: THREE.MathUtils.clamp(c.start - origin, 0, length),
-      end: THREE.MathUtils.clamp(c.end - origin, 0, length),
-      height: c.height,
-    }))
-    .filter((g) => g.end - g.start > 0.001)
-    .sort((a, b) => a.start - b.start);
+  for (const r of wallRects) group.add(wallBox(wallMaterial, r, 0, WALL_HEIGHT));
 
-  const place = (mesh, mid, y) => {
-    if (isHorizontal) mesh.position.set(origin + mid, y, fixed);
-    else mesh.position.set(fixed, y, origin + mid);
-    meshes.push(mesh);
-  };
-
-  // Full-height pieces between gaps
-  let cursor = 0;
-  for (const g of [...gaps, { start: length, end: length }]) {
-    const piece = g.start - cursor;
-    if (piece >= MIN_WALL_PIECE) {
-      place(wallBox(material, piece, WALL_HEIGHT, isHorizontal), cursor + piece / 2, WALL_HEIGHT / 2);
+  for (const r of openingRects) {
+    if (r.opening.height < WALL_HEIGHT - 0.001) {
+      group.add(wallBox(wallMaterial, r, r.opening.height, WALL_HEIGHT));
     }
-    cursor = Math.max(cursor, g.end);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(r.x1 - r.x0, r.z1 - r.z0), thresholdMaterial);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.set((r.x0 + r.x1) / 2, 0, (r.z0 + r.z1) / 2);
+    floor.receiveShadow = true;
+    group.add(floor);
   }
 
-  // Lintels above doors and plain openings
-  for (const g of gaps) {
-    const h = WALL_HEIGHT - g.height;
-    if (h <= 0.001) continue;
-    const w = g.end - g.start;
-    place(wallBox(material, w, h, isHorizontal), g.start + w / 2, g.height + h / 2);
-  }
-
-  return meshes;
+  return group;
 }
 
 function floorColorFor(kind) {
@@ -124,14 +54,12 @@ function floorColorFor(kind) {
 }
 
 /**
- * Builds one zone. Returns { group, ceiling } — the ceiling is kept separate
+ * Builds one zone's floor and ceiling. Returns { group, ceiling } — the ceiling is kept separate
  * so it can be hidden in dollhouse view and shown in pano view.
  */
 export function buildRoomGroup(room) {
   const group = new THREE.Group();
   group.name = room.id;
-
-  const { x1, x2, z1, z2 } = roomBounds(room);
 
   // Floor
   const floor = new THREE.Mesh(
@@ -142,25 +70,6 @@ export function buildRoomGroup(room) {
   floor.position.set(room.x, 0, room.z);
   floor.receiveShadow = true;
   group.add(floor);
-
-  // Walls — 'room' and 'outdoor' get them, 'open' does not
-  if (room.kind === "room" || room.kind === "outdoor") {
-    const wallMaterial = new THREE.MeshStandardMaterial({
-      color: WALL_COLOR,
-      roughness: 0.95,
-    });
-
-    for (const side of ["north", "south", "east", "west"]) {
-      buildWallSide({
-        side,
-        x1,
-        x2,
-        z1,
-        z2,
-        material: wallMaterial,
-      }).forEach((m) => group.add(m));
-    }
-  }
 
   // Ceiling — only enclosed rooms. Balconies and the passage stay open to sky.
   let ceiling = null;
@@ -193,6 +102,7 @@ export function buildAllRooms(scene) {
     if (ceiling) ceilingGroup.add(ceiling);
   }
 
+  scene.add(buildWalls());
   scene.add(ceilingGroup);
   return { groups, ceilingGroup };
 }

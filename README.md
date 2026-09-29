@@ -49,11 +49,13 @@ Ceilings exist only on `room` zones, and are hidden in dollhouse view.
 ```
 CONTEXT.md           — project decisions, read first
 index.html           — page shell + UI overlay
-layout-check.svg     — top-down layout verification diagram
-style.css        — all styling
-roomData.js      — floor plan data model (single source of truth)
-rooms.js         — turns roomData.js into Three.js geometry
-main.js          — scene, dollhouse controls, hotspots, pano mode
+layout-check.svg     — top-down layout verification diagram (old)
+style.css            — all styling
+roomData.js          — floor plan data model (single source of truth)
+walls.js             — resolves shared walls + openings from roomData.js
+rooms.js             — turns roomData.js + walls.js into Three.js geometry
+main.js              — scene, dollhouse controls, hotspots, pano mode
+plan.js              — `node plan.js` -> floor-plan.svg + floor-plan.dxf
 ```
 
 ## Moving to Claude Code

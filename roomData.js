@@ -35,11 +35,13 @@ export const DOOR_HEIGHT = ft(7);
 /**
  * Opening types. None of them gets a mesh — each is simply missing wall
  * from the floor up to `height`; above that the wall carries on as a lintel.
- *   glass   - floor-to-ceiling sliding glass panes
+ *   window  - floor-to-ceiling window (glazing, not a way through)
+ *   glass   - floor-to-ceiling sliding glass door
  *   door    - ordinary wooden door
  *   opening - bare opening, no door at all
  */
 export const OPENING_TYPES = {
+  window: { height: WALL_HEIGHT },
   glass: { height: WALL_HEIGHT },
   door: { height: DOOR_HEIGHT },
   opening: { height: DOOR_HEIGHT },
@@ -70,6 +72,9 @@ export const NORTH_DIRECTION = { x: 0, z: -1 };
  *   offset - distance along that wall from its north end (east/west walls)
  *            or its west end (north/south walls)
  *   type   - key of OPENING_TYPES
+ *   hinge  - doors only: 'start' | 'end' — which jamb the leaf hangs on
+ *            ('start' = the jamb nearer the offset origin)
+ *   swing  - doors only: 'in' opens into this zone, 'out' into its neighbour
  * Each opening is listed ONCE, on either room. It cuts every wall lying on
  * that line — so a door between two rooms goes through both rooms' walls.
  */
@@ -108,8 +113,8 @@ export const rooms = [
     x: ft(5, 6),
     z: ft(12, 1),
     openings: [
-      { side: "west", offset: ft(0, 0), width: ft(9, 5), type: "glass" }, // full wall
-      { side: "east", offset: ft(6, 1), width: ft(3, 0), type: "door" }, // from living
+      { side: "west", offset: ft(0, 0), width: ft(9, 5), type: "window" }, // full wall
+      { side: "east", offset: ft(6, 1), width: ft(3, 0), type: "door", hinge: "end", swing: "in" }, // from living
     ],
   },
   {
@@ -121,7 +126,7 @@ export const rooms = [
     x: ft(7, 2),
     z: ft(19, 6),
     openings: [
-      { side: "south", offset: ft(3, 2), width: ft(2, 6), type: "door" }, // from Yash Room
+      { side: "south", offset: ft(3, 2), width: ft(2, 6), type: "door", hinge: "end", swing: "in" }, // from Yash Room
     ],
   },
   {
@@ -133,8 +138,8 @@ export const rooms = [
     x: ft(5, 6),
     z: ft(27, 1),
     openings: [
-      { side: "west", offset: ft(0, 0), width: ft(10, 0), type: "glass" }, // full wall
-      { side: "east", offset: ft(0, 4), width: ft(3, 0), type: "door" }, // from passage
+      { side: "west", offset: ft(0, 0), width: ft(10, 0), type: "window" }, // full wall
+      { side: "east", offset: ft(0, 4), width: ft(3, 0), type: "door", hinge: "start", swing: "in" }, // from passage
     ],
   },
 
@@ -149,8 +154,8 @@ export const rooms = [
     z: ft(2, 7),
     openings: [
       { side: "west", offset: ft(0, 4), width: ft(4, 4), type: "opening" }, // to living
-      { side: "east", offset: ft(1, 3), width: ft(3, 6), type: "door" }, // main door
-      { side: "south", offset: ft(0, 0), width: ft(4, 0), type: "glass" }, // to kitchen
+      { side: "east", offset: ft(1, 3), width: ft(3, 6), type: "door", hinge: "start", swing: "in" }, // main door
+      { side: "south", offset: ft(0, 0), width: ft(4, 0), type: "opening" }, // to kitchen
     ],
   },
   {
@@ -197,7 +202,7 @@ export const rooms = [
     x: ft(18, 9),
     z: ft(19, 8),
     openings: [
-      { side: "west", offset: ft(1, 0), width: ft(2, 6), type: "door" }, // from passage
+      { side: "west", offset: ft(1, 0), width: ft(2, 6), type: "door", hinge: "start", swing: "in" }, // from passage
     ],
   },
   {
@@ -209,7 +214,7 @@ export const rooms = [
     x: ft(18, 9),
     z: ft(24, 7),
     openings: [
-      { side: "south", offset: ft(2, 9), width: ft(2, 6), type: "door" }, // from Bhagyesh Room
+      { side: "south", offset: ft(2, 9), width: ft(2, 6), type: "door", hinge: "start", swing: "in" }, // from Bhagyesh Room
     ],
   },
   {
@@ -221,7 +226,7 @@ export const rooms = [
     x: ft(17, 3),
     z: ft(32, 9),
     openings: [
-      { side: "north", offset: ft(0, 1), width: ft(3, 0), type: "door" }, // end of passage
+      { side: "north", offset: ft(0, 1), width: ft(3, 0), type: "door", hinge: "start", swing: "in" }, // end of passage
     ],
   },
 

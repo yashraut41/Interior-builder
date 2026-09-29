@@ -43,9 +43,10 @@ Accuracy matters, but nobody is ordering joinery off this.
 Shell with openings, from the owner's colour-coded markup of
 `floor-plan.svg` (2026-09-28):
 
-- **glass** — floor-to-ceiling sliding glass panes (red on the markup)
+- **window** — floor-to-ceiling window: Parents Room and Yash Room west walls
+- **glass** — floor-to-ceiling sliding glass door (red on the markup)
 - **door** — ordinary wooden door, wall continues above 7' (green)
-- **opening** — bare opening, no door, lintel at 7' (blue)
+- **opening** — bare opening, no door, lintel at 7' (blue; also lobby -> kitchen)
 
 Each opening is listed once in `roomData.js` and cuts every wall on its line,
 so shared partitions get the gap on both rooms' walls. Sizes are standard
@@ -55,8 +56,17 @@ measured.
 The toilet between Parents Room and Yash Room belongs to **Yash Room**
 (`toilet_yash`), entered from Yash Room, not the passage.
 
-`node plan.js` regenerates `floor-plan.svg` from `roomData.js` — the 2D check
-drawing for layout and openings.
+**Walls** (`walls.js`, shared by 3D and drawing): room footprints are CLEAR
+internal sizes and walls sit outside them, so printed room sizes are true
+inside. A shared partition is one wall. Walls take thickness from 'open'
+zones (passage), never from rooms. Doors carry `hinge` / `swing`.
+
+**Drawing**: `node plan.js` writes `floor-plan.svg` and `floor-plan.dxf`
+(R12, inches, AIA layer names) from the same primitives. It must follow
+standard architectural plan conventions — poché walls, door leaf + swing arc,
+sliding panels on tracks, dashed heads over bare openings, chain + overall
+dimension strings, door/window marks with a schedule, north arrow, graphic
+scale, title block. Never the owner's colour-coded markup convention.
 
 ## Accuracy status
 
