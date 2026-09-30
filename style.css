@@ -70,6 +70,64 @@ html, body {
   margin-top: auto;
 }
 
+#paint-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(20, 20, 20, 0.75);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+#paint-panel .panel-title {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.02em;
+}
+
+#paint-panel select,
+#paint-panel button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#paint-panel select option {
+  color: #111;
+}
+
+#paint-panel .paint-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#paint-color {
+  width: 36px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+#paint-hex {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  user-select: all;
+}
+
 .hidden {
   display: none !important;
 }

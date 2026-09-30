@@ -85,6 +85,14 @@ through walls. First room done: **Yash Room**, matched to the owner's
 reference renders (deep teal walls, white skirting/ceiling, light grey
 carpet). Furniture from those renders deliberately skipped for now.
 
+**Wall colour controls** (2026-09-30): the top-right panel recolours any
+walled room's paint live, in dollhouse and pano alike (entering a room selects
+it). Every walled zone now has a paint layer; rooms without a `finish` get it
+in the neutral wall colour and no skirting. Picks persist in the browser's
+localStorage only — the panel shows the hex (`0x......`) to paste into that
+room's `finish.wall` once decided; Reset goes back to `roomData.js`. Export
+includes the current picks.
+
 `/#<room_id>` (e.g. `/#yash_room`) opens straight into that room.
 
 ## Accuracy status
