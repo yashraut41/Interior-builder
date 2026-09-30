@@ -30,7 +30,10 @@ Accuracy matters, but nobody is ordering joinery off this.
 - **Vanilla JS + Three.js + Vite.** Hobby project. Flat file structure, no
   framework, no state library, no nested architecture. Keep it that way.
 - **No door or window meshes.** An opening is a missing wall segment, nothing
-  more. No swinging doors.
+  more. No swinging doors. *Exception (owner's request, 2026-09-30):* a
+  window with a `frame` gets an aluminium glazing mesh — Yash Room's west
+  wall is a floor-to-ceiling partition, two fixed panes below a 3'-0"
+  transom and two sliding sashes above.
 - **Ceiling visible in pano mode, hidden in dollhouse view.**
 - **Hotspots at room centres.** Clicking one locks the camera to that spot —
   look around freely, cannot move. Free roaming is deliberately deferred; the
@@ -72,6 +75,18 @@ scale, title block. Never the owner's colour-coded markup convention.
 walls, lintels, thresholds, ceilings — no hotspots) via `Object3D.toJSON()`.
 Open in the three.js editor with File -> Import. Metres, Y up, -Z north.
 
+**Finishes** (2026-09-30): a room's look — wall paint, skirting, ceiling,
+floor (plain or procedural carpet), optional downlight — lives in its
+`finish` entry in `roomData.js`. Paint and skirting are thin layers on that
+room's inner faces only, so a shared partition can differ on each side; the
+wall boxes themselves stay neutral. The downlight's light is in the ceiling
+group, so it is only on in pano mode, and casts shadows so it doesn't leak
+through walls. First room done: **Yash Room**, matched to the owner's
+reference renders (deep teal walls, white skirting/ceiling, light grey
+carpet). Furniture from those renders deliberately skipped for now.
+
+`/#<room_id>` (e.g. `/#yash_room`) opens straight into that room.
+
 ## Accuracy status
 
 - Room **widths and depths** — read off the printed plan dimensions. Trust them.
@@ -86,7 +101,8 @@ Open in the three.js editor with File -> Import. Metres, Y up, -Z north.
 
 ## Immediate next step
 
-Owner reviews openings in the walkthrough, then wall colour controls.
+Owner is matching room look & feel to reference images, one room at a time
+(Yash Room done). Live wall colour controls come after.
 
 ## Planned after that
 

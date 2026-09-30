@@ -75,8 +75,17 @@ export const NORTH_DIRECTION = { x: 0, z: -1 };
  *   hinge  - doors only: 'start' | 'end' — which jamb the leaf hangs on
  *            ('start' = the jamb nearer the offset origin)
  *   swing  - doors only: 'in' opens into this zone, 'out' into its neighbour
+ *   frame  - windows only, optional: { transom } builds an aluminium frame —
+ *            2 fixed panes below the transom height, 2 sliding sashes above
+ *            (the one exception to "openings have no mesh")
  * Each opening is listed ONCE, on either room. It cuts every wall lying on
  * that line — so a door between two rooms goes through both rooms' walls.
+ *
+ * finish (optional): the room's look, applied to its inner faces only, so a
+ * shared partition can be a different colour on each side.
+ *   wall, ceiling, skirting, floorColor - sRGB hex colours
+ *   floor     - 'plain' | 'carpet'
+ *   downlight - true for a single recessed ceiling light at the centre
  */
 export const rooms = [
   // --- Centre spine -------------------------------------------------------
@@ -138,9 +147,20 @@ export const rooms = [
     x: ft(5, 6),
     z: ft(27, 1),
     openings: [
-      { side: "west", offset: ft(0, 0), width: ft(10, 0), type: "window" }, // full wall
+      // Full-wall aluminium glazing: two fixed panes below the transom,
+      // two sliding sashes above.
+      { side: "west", offset: ft(0, 0), width: ft(10, 0), type: "window", frame: { transom: ft(3, 0) } },
       { side: "east", offset: ft(0, 4), width: ft(3, 0), type: "door", hinge: "start", swing: "in" }, // from passage
     ],
+    // From the owner's reference renders (screenshots, 2026-09-29).
+    finish: {
+      wall: 0x22596d, // deep teal
+      ceiling: 0xf4f4f2,
+      skirting: 0xf4f4f2,
+      floor: "carpet",
+      floorColor: 0xc9cad2, // light grey, faint cool cast
+      downlight: true,
+    },
   },
 
   // --- Right column -------------------------------------------------------

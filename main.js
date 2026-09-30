@@ -135,6 +135,13 @@ function exitPanoMode() {
 
 backBtn.addEventListener("click", exitPanoMode);
 
+// Deep link: /#yash_room opens straight into that room (handy when tuning finishes).
+const linkedRoom = hotspotRooms.find((r) => r.id === location.hash.slice(1));
+if (linkedRoom) {
+  camera.position.set(linkedRoom.x, EYE_HEIGHT, linkedRoom.z);
+  enterPanoMode(linkedRoom);
+}
+
 // ---------------------------------------------------------------------------
 // Export — the architecture only (no hotspots, ceilings shown) as three.js
 // JSON. Open in the three.js editor with File -> Import. Units: metres, Y up.
