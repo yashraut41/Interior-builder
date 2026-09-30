@@ -71,6 +71,12 @@ sliding panels on tracks, dashed heads over bare openings, chain + overall
 dimension strings, door/window marks with a schedule, north arrow, graphic
 scale, title block. Never the owner's colour-coded markup convention.
 
+**Lighting** (2026-10-01): neutral viewing light for judging colour — a
+`RoomEnvironment` image-based light + `NeutralToneMapping`, no point lights,
+no shadow maps. The owner found the shadowed sun + point-light setup made
+colours unreadable (jagged shadows, hot spots). Keep it this way until the
+day/night feature adds a real sun deliberately.
+
 **Export**: the "Export flat.json" button writes the architecture (floors,
 walls, lintels, thresholds, ceilings — no hotspots) via `Object3D.toJSON()`.
 Open in the three.js editor with File -> Import. Metres, Y up, -Z north.
@@ -79,9 +85,8 @@ Open in the three.js editor with File -> Import. Metres, Y up, -Z north.
 floor (plain or procedural carpet), optional downlight — lives in its
 `finish` entry in `roomData.js`. Paint and skirting are thin layers on that
 room's inner faces only, so a shared partition can differ on each side; the
-wall boxes themselves stay neutral. The downlight's light is in the ceiling
-group, so it is only on in pano mode, and casts shadows so it doesn't leak
-through walls. First room done: **Yash Room**, matched to the owner's
+wall boxes themselves stay neutral. The downlight is a fixture only (no
+light source). First room done: **Yash Room**, matched to the owner's
 reference renders (deep teal walls, white skirting/ceiling, light grey
 carpet). Furniture from those renders deliberately skipped for now.
 

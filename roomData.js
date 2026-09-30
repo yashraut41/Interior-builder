@@ -85,7 +85,7 @@ export const NORTH_DIRECTION = { x: 0, z: -1 };
  * shared partition can be a different colour on each side.
  *   wall, ceiling, skirting, floorColor - sRGB hex colours
  *   floor     - 'plain' | 'carpet'
- *   downlight - true for a single recessed ceiling light at the centre
+ *   downlight - true for a recessed ceiling light fixture at the centre (visual only)
  */
 export const rooms = [
   // --- Centre spine -------------------------------------------------------

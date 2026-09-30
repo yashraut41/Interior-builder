@@ -11,7 +11,6 @@ const CEILING_COLOR = 0xf2efe8;
 const PAINT_OFFSET = 0.002; // finish sits just proud of the wall face
 const SKIRTING_HEIGHT = 0.1; // ~4"
 const SKIRTING_DEPTH = 0.012;
-const DOWNLIGHT_INTENSITY = 10; // candela; tuned by eye against the reference renders
 
 /** Rotation (about Y) that turns a default +Z-facing plane into the room. */
 const FACE_ROTATION = { north: 0, south: Math.PI, west: Math.PI / 2, east: -Math.PI / 2 };
@@ -254,7 +253,7 @@ function buildFinish(room) {
   return { group, paint };
 }
 
-/** Ceiling plane, plus a recessed downlight if the finish asks for one. */
+/** Ceiling plane, plus a recessed downlight fixture if the finish asks for one. */
 function buildCeiling(room) {
   const color = room.finish?.ceiling ?? CEILING_COLOR;
   const plane = new THREE.Mesh(
@@ -272,16 +271,9 @@ function buildCeiling(room) {
   lamp.rotation.x = Math.PI / 2;
   lamp.position.set(room.x, WALL_HEIGHT - 0.003, room.z);
   lamp.name = `${room.id}_downlight`;
-  // Lives in the ceiling group, so it's only lit when you're inside the room.
-  // Sits well below the fixture: stands in for the bounce light a real room
-  // gets, so walls light evenly instead of burning out at the top.
-  const light = new THREE.PointLight(0xfff6ea, DOWNLIGHT_INTENSITY, 0, 2);
-  light.position.set(room.x, WALL_HEIGHT * 0.6, room.z);
-  light.castShadow = true; // keeps it from leaking through walls
-  light.shadow.bias = -0.002;
-  light.shadow.mapSize.set(1024, 1024);
-  light.name = `${room.id}_downlight_light`;
-  ceiling.add(plane, lamp, light);
+  // Fixture only — no light source. The scene's even environment light is
+  // what lets wall colours read true; a point light here made hot spots.
+  ceiling.add(plane, lamp);
   return ceiling;
 }
 

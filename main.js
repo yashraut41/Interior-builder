@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { rooms, hotspotRooms, EYE_HEIGHT } from "./roomData.js";
 import { buildAllRooms, getFlatBounds } from "./rooms.js";
 
@@ -17,7 +18,7 @@ const paintHexEl = document.getElementById("paint-hex");
 const paintResetBtn = document.getElementById("paint-reset");
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xdcd8ce);
+scene.background = new THREE.Color(0xb9b4a9); // a shade darker than the walls so they separate
 
 const camera = new THREE.PerspectiveCamera(
   60,
@@ -29,14 +30,22 @@ const camera = new THREE.PerspectiveCamera(
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
 appEl.appendChild(renderer.domElement);
 
-scene.add(new THREE.AmbientLight(0xffffff, 0.75));
-const sun = new THREE.DirectionalLight(0xffffff, 0.75);
-sun.position.set(12, 24, 12);
-sun.castShadow = true;
-scene.add(sun);
+// Neutral viewing light, for judging colour. No point lights, no shadow maps.
+// Mostly even ambient light — intensity PI makes a matte surface render at
+// exactly its albedo, so AMBIENT_SHARE of that means a wall shows ~its paint
+// colour — plus a little studio environment light so corners and edges still
+// read. "Khronos PBR Neutral" tone mapping keeps hue and saturation true.
+// Real sun + shadows belong to the later day/night feature.
+const AMBIENT_SHARE = 0.8;
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 1.0;
+scene.add(new THREE.AmbientLight(0xffffff, Math.PI * AMBIENT_SHARE));
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.3;
+pmrem.dispose();
 
 // Geometry, generated entirely from roomData.js
 const { ceilingGroup, paints } = buildAllRooms(scene);
