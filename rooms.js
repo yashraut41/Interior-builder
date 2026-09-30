@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { rooms, WALL_HEIGHT } from "./roomData.js";
-import { wallRects, openingRects, openings, roomBounds } from "./walls.js";
+import { wallRects, openingRects, openings, roomBounds, isWalled } from "./walls.js";
 
 const FLOOR_COLOR = 0xcdc2ad;
 const OPEN_FLOOR_COLOR = 0xbdb199;
@@ -222,15 +222,19 @@ function floorMaterial(room) {
   return new THREE.MeshStandardMaterial({ color: f?.floorColor ?? floorColorFor(room.kind), roughness: 0.9 });
 }
 
-/** Paint + skirting on every inner face of a finished room. */
+/**
+ * Paint on every inner face of a walled zone, plus skirting if it has a
+ * finish. Unfinished zones get paint in the neutral wall colour, so the live
+ * wall colour controls have a material to recolour in every room.
+ */
 function buildFinish(room) {
   const group = new THREE.Group();
   group.name = `${room.id}_finish`;
   const b = roomBounds(room);
-  const paint = new THREE.MeshStandardMaterial({ color: room.finish.wall, roughness: 0.92 });
-  const skirting = new THREE.MeshStandardMaterial({ color: room.finish.skirting ?? 0xffffff, roughness: 0.5 });
+  const paint = new THREE.MeshStandardMaterial({ color: room.finish?.wall ?? WALL_COLOR, roughness: 0.92 });
+  const skirting = room.finish && new THREE.MeshStandardMaterial({ color: room.finish.skirting ?? 0xffffff, roughness: 0.5 });
   paint.name = `${room.id}_paint`;
-  skirting.name = `${room.id}_skirting`;
+  if (skirting) skirting.name = `${room.id}_skirting`;
 
   for (const side of ["north", "south", "west", "east"]) {
     const horizontal = side === "north" || side === "south";
@@ -241,13 +245,13 @@ function buildFinish(room) {
       panel.receiveShadow = true;
       group.add(placeOnFace(panel, b, side, (s + e) / 2, (y0 + y1) / 2, PAINT_OFFSET));
 
-      if (y0 > 0) continue; // lintel over an opening — no skirting
+      if (!skirting || y0 > 0) continue; // unfinished, or lintel over an opening
       const skirt = new THREE.Mesh(new THREE.BoxGeometry(e - s, SKIRTING_HEIGHT, SKIRTING_DEPTH), skirting);
       skirt.name = `${room.id}_skirting_${side}`;
       group.add(placeOnFace(skirt, b, side, (s + e) / 2, SKIRTING_HEIGHT / 2, PAINT_OFFSET + SKIRTING_DEPTH / 2));
     }
   }
-  return group;
+  return { group, paint };
 }
 
 /** Ceiling plane, plus a recessed downlight if the finish asks for one. */
@@ -282,8 +286,9 @@ function buildCeiling(room) {
 }
 
 /**
- * Builds one zone's floor and ceiling. Returns { group, ceiling } — the ceiling is kept separate
- * so it can be hidden in dollhouse view and shown in pano view.
+ * Builds one zone's floor, paint and ceiling. Returns { group, ceiling, paint } —
+ * the ceiling is kept separate so it can be hidden in dollhouse view and shown
+ * in pano view; `paint` is the wall paint material (null for open zones).
  */
 export function buildRoomGroup(room) {
   const group = new THREE.Group();
@@ -297,33 +302,41 @@ export function buildRoomGroup(room) {
   floor.receiveShadow = true;
   group.add(floor);
 
-  if (room.finish?.wall) group.add(buildFinish(room));
+  let paint = null;
+  if (isWalled(room)) {
+    const finish = buildFinish(room);
+    group.add(finish.group);
+    paint = finish.paint;
+  }
 
   // Ceiling — only enclosed rooms. Balconies and the passage stay open to sky.
   const ceiling = room.kind === "room" ? buildCeiling(room) : null;
 
-  return { group, ceiling };
+  return { group, ceiling, paint };
 }
 
 /**
  * Builds every zone. Ceilings go into their own group so the dollhouse view
- * can hide them wholesale.
+ * can hide them wholesale. `paints` maps room id -> wall paint material, for
+ * recolouring live.
  */
 export function buildAllRooms(scene) {
   const groups = {};
+  const paints = {};
   const ceilingGroup = new THREE.Group();
   ceilingGroup.name = "ceilings";
 
   for (const room of rooms) {
-    const { group, ceiling } = buildRoomGroup(room);
+    const { group, ceiling, paint } = buildRoomGroup(room);
     scene.add(group);
     groups[room.id] = group;
+    if (paint) paints[room.id] = paint;
     if (ceiling) ceilingGroup.add(ceiling);
   }
 
   scene.add(buildWalls());
   scene.add(ceilingGroup);
-  return { groups, ceilingGroup };
+  return { groups, ceilingGroup, paints };
 }
 
 /** Bounding box of the whole flat, used to frame the dollhouse camera. */

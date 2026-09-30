@@ -11,6 +11,10 @@ const appEl = document.getElementById("app");
 const backBtn = document.getElementById("back-btn");
 const roomLabelEl = document.getElementById("room-label");
 const exportBtn = document.getElementById("export-btn");
+const paintRoomEl = document.getElementById("paint-room");
+const paintColorEl = document.getElementById("paint-color");
+const paintHexEl = document.getElementById("paint-hex");
+const paintResetBtn = document.getElementById("paint-reset");
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xdcd8ce);
@@ -35,11 +39,63 @@ sun.castShadow = true;
 scene.add(sun);
 
 // Geometry, generated entirely from roomData.js
-const { ceilingGroup } = buildAllRooms(scene);
+const { ceilingGroup, paints } = buildAllRooms(scene);
 const bounds = getFlatBounds();
 
 // Ceilings are hidden in the dollhouse view, shown once inside a room.
 ceilingGroup.visible = false;
+
+// ---------------------------------------------------------------------------
+// Live wall colour — recolours a room's paint material in place, so both
+// views pick it up the next frame. Picks are remembered in this browser only;
+// roomData.js stays the source of truth (Reset goes back to it).
+// ---------------------------------------------------------------------------
+
+const PAINT_STORE = "wallColours";
+const defaultPaint = Object.fromEntries(
+  Object.entries(paints).map(([id, m]) => [id, `#${m.color.getHexString()}`])
+);
+let paintPicks = {};
+try {
+  paintPicks = JSON.parse(localStorage.getItem(PAINT_STORE)) ?? {};
+} catch {}
+
+function savePaintPicks() {
+  try {
+    localStorage.setItem(PAINT_STORE, JSON.stringify(paintPicks));
+  } catch {}
+}
+
+const paintedRooms = rooms.filter((r) => paints[r.id]);
+for (const room of paintedRooms) {
+  paintRoomEl.add(new Option(room.name, room.id));
+  if (paintPicks[room.id]) paints[room.id].color.set(paintPicks[room.id]);
+}
+
+function showPaint() {
+  const hex = `#${paints[paintRoomEl.value].color.getHexString()}`;
+  paintColorEl.value = hex;
+  paintHexEl.textContent = `0x${hex.slice(1)}`;
+}
+
+paintRoomEl.value = "yash_room" in paints ? "yash_room" : paintedRooms[0].id;
+showPaint();
+
+paintRoomEl.addEventListener("change", showPaint);
+paintColorEl.addEventListener("input", () => {
+  const id = paintRoomEl.value;
+  paints[id].color.set(paintColorEl.value);
+  paintPicks[id] = paintColorEl.value;
+  paintHexEl.textContent = `0x${paintColorEl.value.slice(1)}`;
+});
+paintColorEl.addEventListener("change", savePaintPicks);
+paintResetBtn.addEventListener("click", () => {
+  const id = paintRoomEl.value;
+  paints[id].color.set(defaultPaint[id]);
+  delete paintPicks[id];
+  savePaintPicks();
+  showPaint();
+});
 
 // ---------------------------------------------------------------------------
 // Dollhouse (overview) controls
@@ -117,6 +173,12 @@ function enterPanoMode(room) {
 
   panoYaw = Math.atan2(bounds.centerX - room.x, bounds.centerZ - room.z);
   panoPitch = 0;
+
+  // Colour controls follow you into the room you're standing in.
+  if (paints[room.id]) {
+    paintRoomEl.value = room.id;
+    showPaint();
+  }
 }
 
 function exitPanoMode() {
@@ -150,7 +212,8 @@ if (linkedRoom) {
 exportBtn.addEventListener("click", () => {
   const flat = new THREE.Group();
   flat.name = "flat_option1";
-  buildAllRooms(flat);
+  const exported = buildAllRooms(flat);
+  for (const [id, m] of Object.entries(exported.paints)) m.color.copy(paints[id].color);
 
   const json = JSON.stringify(flat.toJSON());
   const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));

@@ -26,6 +26,16 @@
     <div id="hint">Click a hotspot to walk in. Drag to look around.</div>
   </div>
 
+  <div id="paint-panel">
+    <div class="panel-title">Wall colour</div>
+    <select id="paint-room" aria-label="Room"></select>
+    <div class="paint-row">
+      <input type="color" id="paint-color" aria-label="Wall colour" />
+      <code id="paint-hex" title="Paste into this room's finish.wall in roomData.js"></code>
+      <button id="paint-reset" title="Back to the colour in roomData.js">Reset</button>
+    </div>
+  </div>
+
   <script type="module" src="main.js"></script>
 </body>
 
