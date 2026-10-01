@@ -23,7 +23,24 @@
     <button id="back-btn" class="hidden">&larr; Dollhouse view</button>
     <button id="export-btn" title="three.js JSON for the three.js editor (File &rarr; Import)">Export flat.json</button>
     <div id="room-label" class="hidden"></div>
-    <div id="hint">Click a hotspot to walk in. Drag to look around.</div>
+    <div id="hint">Press H for controls</div>
+  </div>
+
+  <div id="hotspot-tip" class="hidden"></div>
+
+  <div id="controls-help">
+    <button id="help-toggle" aria-expanded="false" aria-controls="help-body">Controls <kbd>H</kbd></button>
+    <div id="help-body"></div>
+  </div>
+
+  <div id="splash" class="hidden" role="dialog" aria-modal="true" aria-labelledby="splash-title">
+    <div class="splash-card">
+      <h2 id="splash-title">Flat walkthrough</h2>
+      <p class="splash-sub">Plan Option 1 &middot; 940 sq.ft</p>
+      <div id="splash-controls"></div>
+      <button id="splash-start">Start</button>
+      <p class="splash-note">Press <kbd>H</kbd> any time to see these again.</p>
+    </div>
   </div>
 
   <div id="paint-panel">
