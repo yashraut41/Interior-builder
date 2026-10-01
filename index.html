@@ -26,13 +26,31 @@
     <div id="hint">Click a hotspot to walk in. Drag to look around.</div>
   </div>
 
-  <div id="paint-panel">
-    <div class="panel-title">Wall colour</div>
-    <select id="paint-room" aria-label="Room"></select>
-    <div class="paint-row">
-      <input type="color" id="paint-color" aria-label="Wall colour" />
-      <code id="paint-hex" title="Paste into this room's finish.wall in roomData.js"></code>
-      <button id="paint-reset" title="Back to the colour in roomData.js">Reset</button>
+  <div id="panels">
+    <div id="paint-panel" class="panel">
+      <div class="panel-title">Wall colour</div>
+      <select id="paint-room" aria-label="Room"></select>
+      <div class="panel-row">
+        <input type="color" id="paint-color" aria-label="Wall colour" />
+        <code id="paint-hex" title="Paste into this room's finish.wall in roomData.js"></code>
+        <button id="paint-reset" title="Back to the colour in roomData.js">Reset</button>
+      </div>
+    </div>
+
+    <div id="sun-panel" class="panel">
+      <label class="panel-title"><input type="checkbox" id="sun-on" /> Sun</label>
+      <div id="sun-controls" class="hidden">
+        <div class="panel-row">
+          <input type="date" id="sun-date" aria-label="Date" />
+          <button id="sun-play" title="Run the clock">&#9654;</button>
+        </div>
+        <input type="range" id="sun-time" min="0" max="1439" step="5" aria-label="Time of day" />
+        <div id="sun-readout"></div>
+        <div class="panel-row">
+          <label for="sun-north" title="True compass bearing that up-the-sheet faces. Paste into PLAN_UP_BEARING in roomData.js once confirmed.">Plan up</label>
+          <input type="number" id="sun-north" min="-180" max="360" step="1" />°
+        </div>
+      </div>
     </div>
   </div>
 

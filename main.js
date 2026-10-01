@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { rooms, hotspotRooms, EYE_HEIGHT } from "./roomData.js";
+import { rooms, hotspotRooms, EYE_HEIGHT, WALL_HEIGHT, PLAN_UP_BEARING } from "./roomData.js";
 import { buildAllRooms, getFlatBounds } from "./rooms.js";
+import { wallBounds } from "./walls.js";
+import { sunPosition, sunDirection } from "./sun.js";
 
 // ---------------------------------------------------------------------------
 // Scene setup
@@ -39,9 +41,11 @@ appEl.appendChild(renderer.domElement);
 // read. "Khronos PBR Neutral" tone mapping keeps hue and saturation true.
 // Real sun + shadows belong to the later day/night feature.
 const AMBIENT_SHARE = 0.8;
+const NEUTRAL_BACKGROUND = scene.background.clone();
 renderer.toneMapping = THREE.NeutralToneMapping;
 renderer.toneMappingExposure = 1.0;
-scene.add(new THREE.AmbientLight(0xffffff, Math.PI * AMBIENT_SHARE));
+const ambient = new THREE.AmbientLight(0xffffff, Math.PI * AMBIENT_SHARE);
+scene.add(ambient);
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 scene.environmentIntensity = 0.3;
@@ -50,6 +54,163 @@ pmrem.dispose();
 // Geometry, generated entirely from roomData.js
 const { ceilingGroup, paints } = buildAllRooms(scene);
 const bounds = getFlatBounds();
+
+// ---------------------------------------------------------------------------
+// Sun — the day/night mode, off by default so the neutral light above stays
+// the colour-judging view. One shadowed directional sun on the real sun path
+// for the date and time, plus a sky fill. Daylight only gets in through the
+// openings: a shadow-only slab over the whole flat stands in for the floor
+// above (ceilings are hidden in dollhouse view, and the passage has none).
+// ---------------------------------------------------------------------------
+
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const flatCentre = new THREE.Vector3(bounds.centerX, WALL_HEIGHT / 2, bounds.centerZ);
+const shadowReach = Math.hypot(bounds.width, bounds.depth, WALL_HEIGHT) / 2 + 1;
+
+const sun = new THREE.DirectionalLight(0xffffff, 0);
+sun.castShadow = true;
+sun.shadow.mapSize.set(4096, 4096);
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 0.02;
+Object.assign(sun.shadow.camera, {
+  left: -shadowReach,
+  right: shadowReach,
+  top: shadowReach,
+  bottom: -shadowReach,
+  near: 0.1,
+  far: shadowReach * 4,
+});
+sun.target.position.copy(flatCentre);
+sun.visible = false;
+scene.add(sun, sun.target);
+
+const sky = new THREE.HemisphereLight(0xbfd6ee, 0x8a8170, 0);
+sky.visible = false;
+scene.add(sky);
+
+const roofSlab = new THREE.Mesh(
+  new THREE.BoxGeometry(wallBounds.maxX - wallBounds.minX + 2, 0.15, wallBounds.maxZ - wallBounds.minZ + 2),
+  new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }) // never seen, only casts
+);
+roofSlab.position.set((wallBounds.minX + wallBounds.maxX) / 2, WALL_HEIGHT + 0.075, (wallBounds.minZ + wallBounds.maxZ) / 2);
+roofSlab.castShadow = true;
+roofSlab.visible = false;
+scene.add(roofSlab);
+
+const SUN_STORE = "sunSettings";
+const sunState = { on: false, date: new Date().toLocaleDateString("en-CA"), minutes: 16 * 60, planUp: PLAN_UP_BEARING };
+try {
+  Object.assign(sunState, JSON.parse(localStorage.getItem(SUN_STORE)));
+} catch {}
+
+function saveSunState() {
+  try {
+    localStorage.setItem(SUN_STORE, JSON.stringify(sunState));
+  } catch {}
+}
+
+const smooth = (e0, e1, x) => THREE.MathUtils.smoothstep(x, e0, e1);
+const SKY_NIGHT = new THREE.Color(0x0b1020);
+const SKY_DUSK = new THREE.Color(0xe39a6a);
+const SKY_DAY = new THREE.Color(0x9cc3e6);
+const SUN_LOW = new THREE.Color(0xffa860);
+const SUN_HIGH = new THREE.Color(0xfff3e2);
+
+function applyLighting() {
+  const on = sunState.on;
+  sun.visible = sky.visible = roofSlab.visible = on;
+  if (!on) {
+    ambient.color.set(0xffffff);
+    ambient.intensity = Math.PI * AMBIENT_SHARE;
+    scene.environmentIntensity = 0.3;
+    scene.background.copy(NEUTRAL_BACKGROUND);
+    return;
+  }
+
+  const pos = sunPosition(sunState.date, sunState.minutes);
+  const d = sunDirection(pos, sunState.planUp);
+  const alt = pos.altitude;
+  const day = smooth(-6, 8, alt); // 0 after civil dusk, 1 once properly up
+  const high = smooth(0, 35, alt); // how far past the warm low-sun light
+
+  sun.position.set(flatCentre.x + d.x * shadowReach * 2, flatCentre.y + d.y * shadowReach * 2, flatCentre.z + d.z * shadowReach * 2);
+  sun.intensity = 6 * smooth(-1, 6, alt);
+  sun.color.copy(SUN_LOW).lerp(SUN_HIGH, high);
+
+  sky.intensity = 0.1 + 0.7 * day;
+  sky.color.copy(SKY_DUSK).lerp(SKY_DAY, high);
+  ambient.color.set(0xb8c4dc);
+  ambient.intensity = Math.PI * (0.05 + 0.15 * day);
+  scene.environmentIntensity = 0.05 + 0.2 * day;
+
+  scene.background.copy(SKY_NIGHT).lerp(SKY_DUSK, smooth(-8, 0, alt)).lerp(SKY_DAY, high);
+}
+
+const sunOnEl = document.getElementById("sun-on");
+const sunControlsEl = document.getElementById("sun-controls");
+const sunDateEl = document.getElementById("sun-date");
+const sunTimeEl = document.getElementById("sun-time");
+const sunPlayBtn = document.getElementById("sun-play");
+const sunReadoutEl = document.getElementById("sun-readout");
+const sunNorthEl = document.getElementById("sun-north");
+
+const COMPASS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+const clock = (m) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(Math.floor(m % 60)).padStart(2, "0")}`;
+
+function showSun() {
+  sunOnEl.checked = sunState.on;
+  sunControlsEl.classList.toggle("hidden", !sunState.on);
+  sunDateEl.value = sunState.date;
+  sunTimeEl.value = sunState.minutes;
+  sunNorthEl.value = sunState.planUp;
+  const { azimuth, altitude } = sunPosition(sunState.date, sunState.minutes);
+  const dir = COMPASS[Math.round(azimuth / 45) % 8];
+  sunReadoutEl.textContent =
+    altitude > 0
+      ? `${clock(sunState.minutes)} · sun ${dir} ${azimuth.toFixed(0)}°, ${altitude.toFixed(0)}° up`
+      : `${clock(sunState.minutes)} · sun down`;
+  applyLighting();
+}
+showSun();
+
+let sunPlaying = false;
+const PLAY_RATE = 60 / 1000; // one hour of daylight per second
+
+sunOnEl.addEventListener("change", () => {
+  sunState.on = sunOnEl.checked;
+  saveSunState();
+  showSun();
+});
+sunDateEl.addEventListener("change", () => {
+  if (!sunDateEl.value) return;
+  sunState.date = sunDateEl.value;
+  saveSunState();
+  showSun();
+});
+sunTimeEl.addEventListener("input", () => {
+  sunState.minutes = Number(sunTimeEl.value);
+  showSun();
+});
+sunTimeEl.addEventListener("change", saveSunState);
+sunNorthEl.addEventListener("input", () => {
+  if (sunNorthEl.value === "") return;
+  sunState.planUp = Number(sunNorthEl.value);
+  saveSunState();
+  showSun();
+});
+sunPlayBtn.addEventListener("click", () => {
+  sunPlaying = !sunPlaying;
+  sunPlayBtn.innerHTML = sunPlaying ? "&#10074;&#10074;" : "&#9654;";
+  if (!sunPlaying) saveSunState();
+});
+
+function advanceSun(dt) {
+  if (!sunPlaying) return;
+  sunState.minutes = (sunState.minutes + dt * PLAY_RATE) % 1440;
+  showSun();
+}
 
 // Ceilings are hidden in the dollhouse view, shown once inside a room.
 ceilingGroup.visible = false;
@@ -358,8 +519,12 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+let lastFrame = performance.now();
+
 function animate(now) {
   requestAnimationFrame(animate);
+  advanceSun(now - lastFrame);
+  lastFrame = now;
 
   if (mode === "dollhouse") {
     orbitControls.update();
