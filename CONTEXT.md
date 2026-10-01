@@ -35,9 +35,11 @@ Accuracy matters, but nobody is ordering joinery off this.
   wall is a floor-to-ceiling partition, two fixed panes below a 3'-0"
   transom and two sliding sashes above.
 - **Ceiling visible in pano mode, hidden in dollhouse view.**
-- **Hotspots at room centres.** Clicking one locks the camera to that spot —
-  look around freely, cannot move. Free roaming is deliberately deferred; the
-  lock prevents the user clipping outside the model.
+- **Hotspots at room centres**, and (since 2026-10-01, owner's call) **WASD
+  walking with collision**. The original reason for locking the camera —
+  clipping outside the model — is handled by colliding against the wall model:
+  doorways, openings and sliding glass doors are passable; walls, windows and
+  the main door (leads outside) are not. Arrow keys turn / look up-down.
 - **Ceiling height 10'.** Standard local slab height, no double-height areas.
 - **Garden area excluded** — it appeared on an early crop by mistake.
 
@@ -92,6 +94,17 @@ lights yet.
 up-the-sheet faces; 0 = the plan's north arrow is right). `NORTH_DIRECTION`
 and the drawing's north arrow derive from it. The Sun panel's "Plan up" box
 tries values live; paste the confirmed one into `roomData.js`.
+
+**Room-to-room travel** (2026-10-01): inside a room, the other rooms'
+hotspots float at ~3'-6", face the camera and scale with distance. They are
+depth-tested, so you only see (and can click) rooms visible through a doorway,
+opening or glass; clicking glides there, turning to face the way you went.
+Works alongside WASD walking (see Decisions).
+
+**Controls help** (2026-10-01): first visit shows a welcome card with the
+controls (remembered per browser); after that a "Controls" panel sits
+bottom-right, toggled with H. Touch devices get touch instructions. The owner
+will decide later whether to keep both.
 
 **Export**: the "Export flat.json" button writes the architecture (floors,
 walls, lintels, thresholds, ceilings — no hotspots) via `Object3D.toJSON()`.
