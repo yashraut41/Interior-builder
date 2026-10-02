@@ -76,8 +76,24 @@ scale, title block. Never the owner's colour-coded markup convention.
 **Lighting** (2026-10-01): neutral viewing light for judging colour — a
 `RoomEnvironment` image-based light + `NeutralToneMapping`, no point lights,
 no shadow maps. The owner found the shadowed sun + point-light setup made
-colours unreadable (jagged shadows, hot spots). Keep it this way until the
-day/night feature adds a real sun deliberately.
+colours unreadable (jagged shadows, hot spots). This stays the default view.
+
+**Sun** (2026-10-01): the "Sun" checkbox swaps the neutral light for daylight
+on the real sun path — date, time slider (▶ runs the clock at 1 h/s), sun
+compass direction and altitude shown. `sun.js` is NOAA's solar equations for
+`SITE` (Pune, IST) in `roomData.js`; checked against solstice noon
+altitudes. One shadowed `DirectionalLight` (4096 PCF soft map) + hemisphere
+sky fill + a low ambient. A shadow-only slab (`colorWrite: false`) over the
+whole flat stands in for the floor above, so sun only gets in through the
+openings — in dollhouse view too. Fill light is uniform, so a windowless
+room is as bright as a windowed one; real bounce light waits for the PBR pass.
+Settings persist in localStorage. Night is just a dark sky — no interior
+lights yet.
+
+**Orientation** is `PLAN_UP_BEARING` in `roomData.js` (true bearing that
+up-the-sheet faces; 0 = the plan's north arrow is right). `NORTH_DIRECTION`
+and the drawing's north arrow derive from it. The Sun panel's "Plan up" box
+tries values live; paste the confirmed one into `roomData.js`.
 
 **Room-to-room travel** (2026-10-01): inside a room, the other rooms'
 hotspots float at ~3'-6", face the camera and scale with distance. They are
@@ -121,19 +137,20 @@ includes the current picks.
 - Traced indoor area sums to ~806 sq.ft against the plan's stated 940 carpet
   area. The gap is wall thickness, the untraced niches (mandir, storage, shoe
   rack, wardrobe recesses) and small column gaps. Expected, not a bug.
-- **Orientation**: the plan's north arrow points up the sheet, mapped to -Z.
-  Confirm against the real building before building the sun / day-night
-  feature — sunlight is only meaningful if north is real.
+- **Orientation**: the plan's north arrow points up the sheet, mapped to -Z
+  (`PLAN_UP_BEARING = 0`). STILL UNCONFIRMED against the real building — the
+  sun is only as right as this number.
 
 ## Immediate next step
 
-Owner is matching room look & feel to reference images, one room at a time
-(Yash Room done). Live wall colour controls come after.
+Confirm the flat's real orientation (compass / map) and set
+`PLAN_UP_BEARING`. Room look & feel continues one room at a time (Yash Room
+done).
 
 ## Planned after that
 
-1. Wall colour controls (per-room, live)
-2. Day/night lighting with correct sun path for the flat's orientation
+1. ~~Wall colour controls (per-room, live)~~ done
+2. ~~Day/night lighting with correct sun path~~ done, pending orientation
 3. Furniture import and placement
 4. Realistic / PBR rendering pass — last, explicitly
 

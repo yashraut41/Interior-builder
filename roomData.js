@@ -50,13 +50,24 @@ export const OPENING_TYPES = {
 /** Eye height used for the locked pano viewpoint. */
 export const EYE_HEIGHT = ft(5, 6);
 
+/** Where the flat is, for the sun path. Pune; India has no daylight saving. */
+export const SITE = { lat: 18.5204, lon: 73.8567, utcOffset: 5.5 };
+
 /**
- * Plan orientation: the plan's north arrow points up the sheet, which maps
- * to -Z in this scene. So -Z is north, +Z south, +X east, -X west.
- * TO CONFIRM against the actual building orientation before the sun /
- * day-night feature is built — sunlight is only meaningful if this is right.
+ * Plan orientation. Up the sheet is -Z in this scene (+X is right). This is
+ * the TRUE compass bearing that up-the-sheet actually faces: 0 means the
+ * plan's north arrow is right (-Z north, +X east); 30 would mean up-the-sheet
+ * really faces N30°E.
+ * TO CONFIRM against the actual building — sunlight is only meaningful if
+ * this is right. The Sun panel's "Plan up" box tries values live.
  */
-export const NORTH_DIRECTION = { x: 0, z: -1 };
+export const PLAN_UP_BEARING = 0;
+
+/** True north as a scene direction, derived from PLAN_UP_BEARING. */
+export const NORTH_DIRECTION = {
+  x: -Math.sin((PLAN_UP_BEARING * Math.PI) / 180),
+  z: -Math.cos((PLAN_UP_BEARING * Math.PI) / 180),
+};
 
 /**
  * Each zone is an axis-aligned rectangle defined by its footprint

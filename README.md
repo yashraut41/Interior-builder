@@ -15,6 +15,9 @@ Drag to orbit the dollhouse view. Click a hotspot (red disc) to drop into that
 room at eye height — from there you can only look around, not move. That's
 deliberate. "← Dollhouse view" takes you back out.
 
+Tick **Sun** (top right) for daylight on the real sun path: pick a date, drag
+the time slider or press ▶. Untick it for the neutral colour-judging light.
+
 ## Current state: shell only
 
 Every room is a **sealed box** — no windows, no doors, no openings anywhere.
@@ -54,7 +57,8 @@ style.css            — all styling
 roomData.js          — floor plan data model (single source of truth)
 walls.js             — resolves shared walls + openings from roomData.js
 rooms.js             — turns roomData.js + walls.js into Three.js geometry
-main.js              — scene, dollhouse controls, hotspots, pano mode
+main.js              — scene, lighting, dollhouse controls, hotspots, pano mode
+sun.js               — sun position for a date + time (NOAA equations)
 plan.js              — `node plan.js` -> floor-plan.svg + floor-plan.dxf
 ```
 
