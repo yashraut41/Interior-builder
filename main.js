@@ -101,6 +101,7 @@ const roofSlab = new THREE.Mesh(
 );
 roofSlab.position.set((wallBounds.minX + wallBounds.maxX) / 2, WALL_HEIGHT + 0.075, (wallBounds.minZ + wallBounds.maxZ) / 2);
 roofSlab.castShadow = true;
+roofSlab.raycast = () => {}; // invisible: must not swallow hotspot clicks
 roofSlab.visible = false;
 scene.add(roofSlab);
 
