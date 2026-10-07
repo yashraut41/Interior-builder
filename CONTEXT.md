@@ -183,8 +183,12 @@ layout" panel (dollhouse + Yash Room; remembered per browser):
 1b Designer's (interior designer's suggestion: Balanced with the bed turned
 east-west along the south wall, so the desk drops to 4'), 2 Coder first
 (L-desk 6' + 3' return in the NW corner, 3'6" bed along the south wall,
-4' wardrobe + loft SW). Owner leans to 2. Desks sit on the north/south walls
-so the glass wall gives side light, not screen glare. Collision doesn't know
+4' wardrobe + loft SW). Desks sit on the north/south walls so the glass wall
+gives side light, not screen glare.
+**Owner's pick (2026-10-07): 1 Balanced**, now the default. Head must point
+SOUTH while sleeping, and Balanced is the only layout with the bed north-south
+(headboard on the south wall); 1b and 2 put the head east. It also keeps the
+full 6' for both wardrobe and desk. Collision doesn't know
 the furniture yet.
 
 `/#<room_id>` (e.g. `/#yash_room`) opens straight into that room.

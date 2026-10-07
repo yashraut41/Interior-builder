@@ -50,7 +50,7 @@ export const LAYOUTS = [
     chair: { x: 44, z: 46, facing: "north" },
   },
 ];
-export const DEFAULT_LAYOUT = "coder";
+export const DEFAULT_LAYOUT = "balanced";
 
 const WARDROBE_H = 84; // 7'-0", loft above to the ceiling
 const DESK_H = 29;
