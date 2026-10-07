@@ -32,6 +32,12 @@ export const LAYOUTS = [
     bed: { x: 75, z: 41, w: 58, l: 79, head: "south", pillows: 2 },
     desk: { tops: [{ x: 0, z: 0, w: 72, l: 30 }, { x: 0, z: 30, w: 30, l: 36 }], wall: "north", monitors: 2 },
     chair: { x: 44, z: 46, facing: "north" },
+    // Shown as an on-screen overlay while this layout is selected.
+    vastu: [
+      ["Bed", "head to the south, Vastu's recommended sleeping direction"],
+      ["Desk", "you face north while working, the direction for focus and career"],
+      ["Wardrobe", "heavy storage on the south wall, where Vastu wants the weight"],
+    ],
   },
   {
     id: "designer",

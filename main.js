@@ -296,6 +296,7 @@ function showRoomPanels(room) {
   doorPanelEl.classList.toggle("hidden", !(door.slider && inKitchen));
   themePanelEl.classList.toggle("hidden", !!room && !inKitchen);
   layoutPanelEl.classList.toggle("hidden", !!room && room.id !== "yash_room");
+  showVastu();
 }
 
 doorBtn.addEventListener("click", () => {
@@ -374,6 +375,8 @@ const LAYOUT_STORE = "yashLayout";
 const layoutPanelEl = document.getElementById("layout-panel");
 const layoutOptionsEl = document.getElementById("layout-options");
 const layoutNoteEl = document.getElementById("layout-note");
+const vastuCardEl = document.getElementById("vastu-card");
+const vastuListEl = document.getElementById("vastu-list");
 
 let yashLayout = DEFAULT_LAYOUT;
 try {
@@ -396,10 +399,24 @@ function setYashLayout(id) {
   for (const [lid, g] of Object.entries(yashLayouts)) g.visible = lid === layout.id;
   LAYOUTS.forEach((l, i) => layoutButtons[i].setAttribute("aria-checked", String(l.id === layout.id)));
   layoutNoteEl.textContent = layout.note;
+  vastuListEl.replaceChildren(
+    ...(layout.vastu ?? []).map(([what, why]) => {
+      const li = document.createElement("li");
+      li.append(Object.assign(document.createElement("strong"), { textContent: what }), ` — ${why}`);
+      return li;
+    })
+  );
+  showVastu();
   try {
     localStorage.setItem(LAYOUT_STORE, layout.id);
   } catch {}
 }
+/** Vastu overlay: whenever the layout panel is up and the layout has notes. */
+function showVastu() {
+  const layout = LAYOUTS.find((l) => l.id === yashLayout);
+  vastuCardEl.classList.toggle("hidden", layoutPanelEl.classList.contains("hidden") || !layout?.vastu);
+}
+
 setYashLayout(yashLayout);
 
 // ---------------------------------------------------------------------------

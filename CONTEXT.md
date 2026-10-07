@@ -193,7 +193,11 @@ L-desk in the same NW corner (owner, 2026-10-07: wants to FACE NORTH while
 working): 6' top on the north wall + 3' return (30" deep) south along the
 glass wall; the 6' wardrobe moved to the south wall (x 0-72), beside the
 headboard. 30" clear between the return and the wardrobe front, 45" between
-the return and the bed. Collision doesn't know
+the return and the bed.
+A "Vastu-aligned layout" card (top-left) explains the placement whenever
+Balanced is selected, in the dollhouse and Yash Room: bed head south, desk
+facing north, heavy wardrobe on the south wall. Text lives in the layout's
+`vastu` entry in `yashRoom.js`. Collision doesn't know
 the furniture yet.
 
 `/#<room_id>` (e.g. `/#yash_room`) opens straight into that room.
