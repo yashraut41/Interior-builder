@@ -63,6 +63,37 @@ html, body {
   letter-spacing: 0.02em;
 }
 
+#vastu-card {
+  pointer-events: none;
+  max-width: 340px;
+  background: rgba(20, 20, 20, 0.7);
+  color: #fff;
+  border: 1px solid rgba(214, 170, 92, 0.6);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+#vastu-card .vastu-title {
+  color: #e6c27a;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+#vastu-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+#vastu-card strong {
+  color: #e6c27a;
+  font-weight: 600;
+}
+
 #hint {
   pointer-events: none;
   color: rgba(255, 255, 255, 0.6);

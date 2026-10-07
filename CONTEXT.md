@@ -179,12 +179,25 @@ Mandir, appliances, hob, steel stay fixed across themes.
 **Yash Room layouts** (2026-10-07): `yashRoom.js` — true-size planning
 blocks for the owner's home-coding setup, switchable live from the "Yash Room
 layout" panel (dollhouse + Yash Room; remembered per browser):
-1 Balanced (6' desk south wall, 4'6" bed headboard-south, 6' wardrobe NW),
+1 Balanced (6' + 3' L-desk NW corner facing north, 4'6" bed headboard-south, 6' wardrobe on the south wall),
 1b Designer's (interior designer's suggestion: Balanced with the bed turned
 east-west along the south wall, so the desk drops to 4'), 2 Coder first
 (L-desk 6' + 3' return in the NW corner, 3'6" bed along the south wall,
-4' wardrobe + loft SW). Owner leans to 2. Desks sit on the north/south walls
-so the glass wall gives side light, not screen glare. Collision doesn't know
+4' wardrobe + loft SW). Desks sit on the north/south walls so the glass wall
+gives side light, not screen glare.
+**Owner's pick (2026-10-07): 1 Balanced**, now the default. Head must point
+SOUTH while sleeping, and Balanced is the only layout with the bed north-south
+(headboard on the south wall); 1b and 2 put the head east. It also keeps the
+full 6' for both wardrobe and desk. Balanced now carries Coder first's
+L-desk in the same NW corner (owner, 2026-10-07: wants to FACE NORTH while
+working): 6' top on the north wall + 3' return (30" deep) south along the
+glass wall; the 6' wardrobe moved to the south wall (x 0-72), beside the
+headboard. 30" clear between the return and the wardrobe front, 45" between
+the return and the bed.
+A "Vastu-aligned layout" card (top-left) explains the placement whenever
+Balanced is selected, in the dollhouse and Yash Room: bed head south, desk
+facing north, heavy wardrobe on the south wall. Text lives in the layout's
+`vastu` entry in `yashRoom.js`. Collision doesn't know
 the furniture yet.
 
 `/#<room_id>` (e.g. `/#yash_room`) opens straight into that room.
