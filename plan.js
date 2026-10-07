@@ -75,15 +75,16 @@ for (const [a, b] of wallOutline) line("A-WALL", a, b);
 // ---------------------------------------------------------------------------
 
 // Marks: D1.. doors, W1.. windows, SD1.. sliding glass, OP1.. bare openings (widest first)
-const PREFIX = { door: "D", window: "W", glass: "SD", opening: "OP" };
+const PREFIX = { door: "D", window: "W", glass: "SD", opening: "OP", railing: "R" };
 const DESC = {
   door: "FLUSH DOOR, HINGED",
   window: "WINDOW, FLOOR TO CEILING",
   glass: "SLIDING GLASS DOOR, FLOOR TO CEILING",
   opening: "OPENING, NO SHUTTER",
+  railing: "HALF WALL 3'-0\" + METAL RAILING",
 };
 const schedule = [];
-for (const type of ["door", "window", "glass", "opening"]) {
+for (const type of ["door", "window", "glass", "opening", "railing"]) {
   const list = openings.filter((o) => o.type === type);
   const widths = [...new Set(list.map((o) => Math.round(o.width * M_TO_FT * 12)))].sort((a, b) => b - a);
   widths.forEach((inches, i) => {
@@ -144,6 +145,13 @@ for (const o of openings) {
       const p1 = s + ((k + 1) * w) / n + (k < n - 1 ? OV : 0);
       poly("A-GLAZ", [at(p0, track - PT / 2), at(p1, track - PT / 2), at(p1, track + PT / 2), at(p0, track + PT / 2)]);
     }
+  }
+
+  if (o.type === "railing") {
+    // Half wall below the cut plane: its two faces, plus the rail on the centreline
+    line("A-WALL", at(s, a0), at(e, a0));
+    line("A-WALL", at(s, a1), at(e, a1));
+    line("A-GLAZ", at(s, (a0 + a1) / 2), at(e, (a0 + a1) / 2));
   }
 
   if (o.type === "opening") {

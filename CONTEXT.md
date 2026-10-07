@@ -127,6 +127,55 @@ localStorage only — the panel shows the hex (`0x......`) to paste into that
 room's `finish.wall` once decided; Reset goes back to `roomData.js`. Export
 includes the current picks.
 
+**TV wall** (2026-10-04): Living & Dining's `tvWall` in `roomData.js` — the
+solid 6'-10" of west wall between the balcony slider (SD2) and the Parents
+Room door (D2). Full-height fluted walnut panel, floating off-white console
+(6'-0" x 14" deep, 8" off the floor), 65" TV centred at 42". Built in code
+(`buildTvWall` in `rooms.js`), not a model: a TV is a box, and exact real
+dimensions matter more than looks. Sized from a planned L-sofa against the
+kitchen wall, ~9' away (RTINGS: 65" is the 30° minimum there, 75" the sweet
+spot; owner chose 65"). Walking collision doesn't know about it yet.
+
+**Kitchen + utility joinery** (2026-10-05): `kitchen.js`, from the
+designer's elevation sheet `KITCHEN-Model.pdf` (plan + elevations AA-DD). The
+sheet has no dimension strings; numbers were read from its vector geometry,
+scaled so the kitchen's drawn length = 11'-7" (its plan proportions match ours
+to <1%). Worktop 2'-8 1/2"; base 23.4" deep; wall units 13.2" deep, 5'-3" to
+7'-3"; lofts to the ceiling. East wall (BB): drawers, hob + chimney between two
+glass-profile units, sink. West wall (DD): mandir (north end), drawer bank with
+open shelf / niche / fluted-glass units, appliance tower, fridge. Utility (the
+Dry Balcony): sink run east, washing machine + tall storage west. The two DD
+drawings are one tower **open vs closed** (fluted shutter over microwave +
+mixer) — `APPLIANCE_TOWER` in `kitchen.js`. Finishes are placeholders
+(graphite base, light oak uppers, white quartz) — owner has no picks yet.
+Plan changes from the sheet: kitchen<->utility is a wall with sliding glass
+(SD1) only from the west wall to where the worktop starts (5'-5 1/2"), per
+owner; lobby->kitchen opening OP2 narrowed to 2'-8 1/4" — the west 15 3/4" is
+a stub wall behind the mandir.
+Open questions: the designer drew the ceiling at ~8'-7 1/2" (model: 10'),
+so lofts here are taller than designed; the drawing aligns the utility's EAST
+face with the kitchen's (model aligns the west — 4" difference); the fridge
+stands in front of the west end of the SD1 glass, as drawn.
+
+**Utility end + door** (2026-10-06, owner): the utility (Dry Balcony) faces
+the building's inner shaft. Its south wall is a `railing` opening — 3'-0"
+half wall, slim black rod ~10" above it on vertical rods ~2' apart, open
+above. Openings now carry a `sill` (wall kept below it); railings are never
+walkable. SD1 (kitchen <-> utility) has a frosted sliding door
+(`slide: "utility_door"`): two panels on two tracks under a fixed frosted
+transom at 7'; the east panel slides over the west one. "Open / Close utility
+door" button shows while you're in the kitchen or utility; walking through
+needs it open (hotspot travel ignores it).
+
+**Kitchen themes** (2026-10-06): `THEMES` in `kitchen.js` — 9 complete
+palettes from 2026 trend round-ups (two-tone light-over-dark, warm neutrals,
+woods, top Indian modular combos). Each sets base shutters, uppers / lofts /
+tall units, worktop, backsplash, metal accents (glass-profile frames) and the
+kitchen + utility wall paint. The "Kitchen theme" swatch panel (dollhouse,
+kitchen, utility) switches live; the pick is remembered per browser. Walls go
+through the wall colour picks, so that panel can still fine-tune them.
+Mandir, appliances, hob, steel stay fixed across themes.
+
 `/#<room_id>` (e.g. `/#yash_room`) opens straight into that room.
 
 ## Accuracy status

@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import { rooms, WALL_HEIGHT } from "./roomData.js";
+import { rooms, WALL_HEIGHT, DOOR_HEIGHT } from "./roomData.js";
 import { wallRects, openingRects, openings, roomBounds, isWalled } from "./walls.js";
+import { buildKitchen } from "./kitchen.js";
 
 const FLOOR_COLOR = 0xcdc2ad;
 const OPEN_FLOOR_COLOR = 0xbdb199;
@@ -114,6 +115,10 @@ function buildWalls() {
     if (r.opening.height < WALL_HEIGHT - 0.001) {
       group.add(wallBox(wallMaterial, r, r.opening.height, WALL_HEIGHT, `lintel_${tag}_${i}`));
     }
+    if (r.opening.sill > 0) {
+      group.add(wallBox(wallMaterial, r, 0, r.opening.sill, `parapet_${tag}_${i}`));
+      return; // half wall, not a way through: no threshold
+    }
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(r.x1 - r.x0, r.z1 - r.z0), thresholdMaterial);
     floor.rotation.x = -Math.PI / 2;
     floor.position.set((r.x0 + r.x1) / 2, 0, (r.z0 + r.z1) / 2);
@@ -132,11 +137,125 @@ function buildWalls() {
   });
   frameMat.name = "aluminium";
   glassMat.name = "glass";
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0x2a2b2d, metalness: 0.6, roughness: 0.4 });
+  metalMat.name = "metal";
+  const sliders = {};
   for (const o of openings) {
-    if (o.frame && !o.orphan) group.add(buildGlazing(o, frameMat, glassMat));
+    if (o.orphan) continue;
+    if (o.frame) group.add(buildGlazing(o, frameMat, glassMat));
+    if (o.type === "railing") group.add(buildRailing(o, metalMat));
+    if (o.slide) {
+      const door = buildSlidingDoor(o);
+      group.add(door.group);
+      sliders[o.slide] = door;
+    }
   }
 
+  return { group, sliders };
+}
+
+// Railing on a half wall: a slim rod "floating" above it on vertical rods
+const RAIL_RISE = 0.25; // rod sits ~10" above the half wall
+const RAIL_R = 0.019;
+const POST_R = 0.008;
+const POST_PITCH = 0.6; // ~2' between supports
+
+function buildRailing(o, metalMat) {
+  const group = new THREE.Group();
+  group.name = `railing_${o.room.id}_${o.side}`;
+  const [s, e] = o.along;
+  const mid = (o.across[0] + o.across[1]) / 2;
+  const at = (u, y, mesh) => {
+    if (o.horizontal) mesh.position.set(u, y, mid);
+    else mesh.position.set(mid, y, u);
+    mesh.castShadow = true;
+    group.add(mesh);
+    return mesh;
+  };
+  const top = o.sill + RAIL_RISE;
+  const rod = at((s + e) / 2, top, new THREE.Mesh(new THREE.CylinderGeometry(RAIL_R, RAIL_R, e - s, 16), metalMat));
+  if (o.horizontal) rod.rotation.z = Math.PI / 2;
+  else rod.rotation.x = Math.PI / 2;
+  rod.name = "rail";
+  const n = Math.max(2, Math.round((e - s) / POST_PITCH) + 1);
+  for (let k = 0; k < n; k++) {
+    const u = s + 0.05 + ((e - s - 0.1) * k) / (n - 1);
+    at(u, o.sill + RAIL_RISE / 2, new THREE.Mesh(new THREE.CylinderGeometry(POST_R, POST_R, RAIL_RISE, 10), metalMat)).name = "rail_post";
+  }
   return group;
+}
+
+// Sliding door: two frosted panels on two tracks below a fixed frosted
+// transom at door height. The panel at the `e` end slides over the other.
+const SD_FRAME = 0.04;
+const SD_DEPTH = 0.07;
+const SD_STILE = 0.05;
+const SD_OVERLAP = 0.05;
+
+function buildSlidingDoor(o) {
+  const group = new THREE.Group();
+  group.name = `sliding_door_${o.slide}`;
+  const frame = new THREE.MeshStandardMaterial({ color: 0x2c2d2f, metalness: 0.4, roughness: 0.4 });
+  const frosted = new THREE.MeshStandardMaterial({
+    color: 0xf2f5f5,
+    transparent: true,
+    opacity: 0.6,
+    roughness: 0.7,
+    depthWrite: false,
+  });
+  frame.name = "door_frame";
+  frosted.name = "frosted_glass";
+  const [s, e] = o.along;
+  const mid = (o.across[0] + o.across[1]) / 2;
+
+  // u = along the wall, w = through it
+  const box = (parent, u0, u1, y0, y1, w0, w1, mat, name) => {
+    const [du, dy, dw] = [u1 - u0, y1 - y0, w1 - w0];
+    const mesh = new THREE.Mesh(o.horizontal ? new THREE.BoxGeometry(du, dy, dw) : new THREE.BoxGeometry(dw, dy, du), mat);
+    const [u, y, w] = [(u0 + u1) / 2, (y0 + y1) / 2, (w0 + w1) / 2];
+    if (o.horizontal) mesh.position.set(u, y, w);
+    else mesh.position.set(w, y, u);
+    mesh.name = name;
+    mesh.castShadow = mat === frame;
+    parent.add(mesh);
+  };
+
+  // Outer frame, transom bar, floor track, fixed transom glass
+  const [d0, d1] = [mid - SD_DEPTH / 2, mid + SD_DEPTH / 2];
+  box(group, s, s + SD_FRAME, 0, WALL_HEIGHT, d0, d1, frame, "jamb");
+  box(group, e - SD_FRAME, e, 0, WALL_HEIGHT, d0, d1, frame, "jamb");
+  box(group, s, e, WALL_HEIGHT - SD_FRAME, WALL_HEIGHT, d0, d1, frame, "head");
+  box(group, s, e, DOOR_HEIGHT - SD_FRAME / 2, DOOR_HEIGHT + SD_FRAME / 2, d0, d1, frame, "transom");
+  box(group, s, e, 0, 0.012, d0, d1, frame, "track");
+  box(group, s + SD_FRAME, e - SD_FRAME, DOOR_HEIGHT + SD_FRAME / 2, WALL_HEIGHT - SD_FRAME, mid - 0.003, mid + 0.003, frosted, "transom_glass");
+
+  // Panels
+  const inner = e - s - 2 * SD_FRAME;
+  const pw = inner / 2 + SD_OVERLAP / 2;
+  const [y0, y1] = [0.012, DOOR_HEIGHT - SD_FRAME / 2];
+  const panel = (u0, w, name) => {
+    const g = new THREE.Group();
+    g.name = name;
+    const [p0, p1] = [w - 0.012, w + 0.012];
+    box(g, u0, u0 + pw, y0, y0 + SD_STILE, p0, p1, frame, "rail");
+    box(g, u0, u0 + pw, y1 - SD_STILE, y1, p0, p1, frame, "rail");
+    box(g, u0, u0 + SD_STILE, y0 + SD_STILE, y1 - SD_STILE, p0, p1, frame, "stile");
+    box(g, u0 + pw - SD_STILE, u0 + pw, y0 + SD_STILE, y1 - SD_STILE, p0, p1, frame, "stile");
+    box(g, u0 + SD_STILE, u0 + pw - SD_STILE, y0 + SD_STILE, y1 - SD_STILE, w - 0.003, w + 0.003, frosted, "glass");
+    group.add(g);
+    return g;
+  };
+  panel(s + SD_FRAME, mid - 0.018, "fixed_panel");
+  const moving = panel(e - SD_FRAME - pw, mid + 0.018, "sliding_panel");
+  // Pull handle on the leading edge, both faces
+  const hu = e - SD_FRAME - pw + SD_STILE / 2;
+  box(moving, hu - 0.012, hu + 0.012, 0.9, 1.2, mid + 0.018 - 0.04, mid + 0.018 + 0.04, frame, "handle");
+
+  const travel = -(pw - SD_OVERLAP); // slides toward `s`, over the fixed panel
+  const offset = o.horizontal ? new THREE.Vector3(travel, 0, 0) : new THREE.Vector3(0, 0, travel);
+  /** 0 = shut, 1 = open */
+  const set = (t) => moving.position.copy(offset).multiplyScalar(t);
+  return { group, set, opening: o };
 }
 
 function floorColorFor(kind) {
@@ -150,7 +269,7 @@ function floorColorFor(kind) {
 // only, so shared partitions keep their other side untouched.
 // ---------------------------------------------------------------------------
 
-/** Gaps [start, end, top] in one inner face, from any opening on that line. */
+/** Gaps [start, end, top, sill] in one inner face, from any opening on that line. */
 function holesOnFace(b, side) {
   const horizontal = side === "north" || side === "south";
   const face = { north: b.z0, south: b.z1, west: b.x0, east: b.x1 }[side];
@@ -158,7 +277,7 @@ function holesOnFace(b, side) {
   return openings
     .filter((o) => !o.orphan && o.horizontal === horizontal)
     .filter((o) => o.across[0] <= face + 1e-4 && o.across[1] >= face - 1e-4)
-    .map((o) => [Math.max(lo, o.along[0]), Math.min(hi, o.along[1]), o.height])
+    .map((o) => [Math.max(lo, o.along[0]), Math.min(hi, o.along[1]), o.height, o.sill])
     .filter(([s, e]) => e - s > 1e-4)
     .sort((p, q) => p[0] - q[0]);
 }
@@ -167,8 +286,9 @@ function holesOnFace(b, side) {
 function faceSpans(lo, hi, holes) {
   const spans = [];
   let cur = lo;
-  for (const [s, e, top] of holes) {
+  for (const [s, e, top, sill] of holes) {
     if (s > cur) spans.push([cur, s, 0, WALL_HEIGHT]);
+    if (sill > 0) spans.push([s, e, 0, sill]); // half wall below a railing
     if (top < WALL_HEIGHT - 1e-4) spans.push([s, e, top, WALL_HEIGHT]);
     cur = Math.max(cur, e);
   }
@@ -253,6 +373,75 @@ function buildFinish(room) {
   return { group, paint };
 }
 
+// TV feature wall
+const INCH = 0.0254;
+const BACKING = 0.012; // board the flutes sit on
+const SLAT = { width: 0.025, gap: 0.012, depth: 0.018 }; // ~1" flutes
+const CONSOLE = { maxLength: 72 * INCH, depth: 14 * INCH, height: 14 * INCH, lift: 8 * INCH };
+const TV_CENTRE = 42 * INCH; // seated eye height
+const TV_DEPTH = 0.025;
+const TV_MOUNT_GAP = 0.03;
+
+/**
+ * TV feature wall on one solid stretch: full-height fluted walnut panel,
+ * floating console, wall-mounted 16:9 TV sized from its diagonal — all
+ * centred on the stretch.
+ */
+function buildTvWall(room) {
+  const t = room.tvWall;
+  const b = roomBounds(room);
+  const group = new THREE.Group();
+  group.name = `${room.id}_tv_wall`;
+  const horizontal = t.side === "north" || t.side === "south";
+  const start = (horizontal ? b.x0 : b.z0) + t.offset;
+  const mid = start + t.width / 2;
+
+  const mat = (color, roughness, metalness = 0) => new THREE.MeshStandardMaterial({ color, roughness, metalness });
+  const walnut = mat(0x7b5235, 0.55);
+  const backing = mat(0x3a281b, 0.7);
+  const lacquer = mat(0xece8e0, 0.4);
+  const groove = mat(0x8f897f, 0.6);
+  const tvBody = mat(0x161616, 0.4, 0.3);
+  const screen = mat(0x07080a, 0.12);
+
+  // A box `w` along the wall, `h` tall, `d` deep, its back `back` off the wall face
+  const add = (w, h, d, along, y, back, material, name) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+    mesh.name = `${room.id}_${name}`;
+    mesh.castShadow = mesh.receiveShadow = true;
+    group.add(placeOnFace(mesh, b, t.side, along, y, back + d / 2));
+  };
+
+  // Fluted panel, floor to ceiling
+  add(t.width, WALL_HEIGHT, BACKING, mid, WALL_HEIGHT / 2, PAINT_OFFSET, backing, "tv_panel");
+  const pitch = SLAT.width + SLAT.gap;
+  const count = Math.floor((t.width + SLAT.gap) / pitch);
+  const first = mid - ((count - 1) * pitch) / 2;
+  for (let i = 0; i < count; i++) {
+    add(SLAT.width, WALL_HEIGHT, SLAT.depth, first + i * pitch, WALL_HEIGHT / 2, PAINT_OFFSET + BACKING, walnut, "tv_flute");
+  }
+  const panelFront = PAINT_OFFSET + BACKING + SLAT.depth;
+
+  // Floating console, three shutters
+  const length = Math.min(CONSOLE.maxLength, t.width - 8 * INCH);
+  const cy = CONSOLE.lift + CONSOLE.height / 2;
+  add(length, CONSOLE.height, CONSOLE.depth, mid, cy, panelFront, lacquer, "tv_console");
+  for (const k of [-1, 1]) {
+    add(0.004, CONSOLE.height - 0.02, 0.002, mid + (k * length) / 6, cy, panelFront + CONSOLE.depth, groove, "tv_console_groove");
+  }
+
+  // TV: 16:9 from the diagonal
+  const diag = t.tv * INCH;
+  const [w, h] = [(diag * 16) / Math.hypot(16, 9), (diag * 9) / Math.hypot(16, 9)];
+  const tvBack = panelFront + TV_MOUNT_GAP;
+  add(w, h, TV_DEPTH, mid, TV_CENTRE, tvBack, tvBody, "tv");
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.01, h - 0.01), screen);
+  glass.name = `${room.id}_tv_screen`;
+  group.add(placeOnFace(glass, b, t.side, mid, TV_CENTRE, tvBack + TV_DEPTH + 0.001));
+
+  return group;
+}
+
 /** Ceiling plane, plus a recessed downlight fixture if the finish asks for one. */
 function buildCeiling(room) {
   const color = room.finish?.ceiling ?? CEILING_COLOR;
@@ -300,6 +489,7 @@ export function buildRoomGroup(room) {
     group.add(finish.group);
     paint = finish.paint;
   }
+  if (room.tvWall) group.add(buildTvWall(room));
 
   // Ceiling — only enclosed rooms. Balconies and the passage stay open to sky.
   const ceiling = room.kind === "room" ? buildCeiling(room) : null;
@@ -310,7 +500,8 @@ export function buildRoomGroup(room) {
 /**
  * Builds every zone. Ceilings go into their own group so the dollhouse view
  * can hide them wholesale. `paints` maps room id -> wall paint material, for
- * recolouring live.
+ * recolouring live; `sliders` maps a sliding door's id -> { set(t) } (0 shut,
+ * 1 open); `kitchenMaterials` is what applyKitchenTheme() recolours.
  */
 export function buildAllRooms(scene) {
   const groups = {};
@@ -326,9 +517,14 @@ export function buildAllRooms(scene) {
     if (ceiling) ceilingGroup.add(ceiling);
   }
 
-  scene.add(buildWalls());
+  const kitchen = buildKitchen();
+  scene.add(kitchen.group);
+  ceilingGroup.add(kitchen.ceiling);
+
+  const walls = buildWalls();
+  scene.add(walls.group);
   scene.add(ceilingGroup);
-  return { groups, ceilingGroup, paints };
+  return { groups, ceilingGroup, paints, sliders: walls.sliders, kitchenMaterials: kitchen.materials };
 }
 
 /** Bounding box of the whole flat, used to frame the dollhouse camera. */

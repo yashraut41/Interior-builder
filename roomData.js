@@ -39,12 +39,15 @@ export const DOOR_HEIGHT = ft(7);
  *   glass   - floor-to-ceiling sliding glass door
  *   door    - ordinary wooden door
  *   opening - bare opening, no door at all
+ *   railing - half wall up to `sill`, metal rail on top, open above
+ *             (the utility's end, onto the building's inner shaft)
  */
 export const OPENING_TYPES = {
   window: { height: WALL_HEIGHT },
   glass: { height: WALL_HEIGHT },
   door: { height: DOOR_HEIGHT },
   opening: { height: DOOR_HEIGHT },
+  railing: { height: WALL_HEIGHT, sill: ft(3, 0) },
 };
 
 /** Eye height used for the locked pano viewpoint. */
@@ -86,6 +89,8 @@ export const NORTH_DIRECTION = {
  *   hinge  - doors only: 'start' | 'end' — which jamb the leaf hangs on
  *            ('start' = the jamb nearer the offset origin)
  *   swing  - doors only: 'in' opens into this zone, 'out' into its neighbour
+ *   slide  - sliding glass only, optional: an id ('utility_door') that gets a
+ *            frosted sliding door mesh and an Open / Close button
  *   frame  - windows only, optional: { transom } builds an aluminium frame —
  *            2 fixed panes below the transom height, 2 sliding sashes above
  *            (the one exception to "openings have no mesh")
@@ -97,6 +102,10 @@ export const NORTH_DIRECTION = {
  *   wall, ceiling, skirting, floorColor - sRGB hex colours
  *   floor     - 'plain' | 'carpet'
  *   downlight - true for a recessed ceiling light fixture at the centre (visual only)
+ *
+ * tvWall (optional): TV feature wall on one solid stretch of wall.
+ *   side, offset, width - the stretch, measured like an opening
+ *   tv                  - screen diagonal in inches (16:9)
  */
 export const rooms = [
   // --- Centre spine -------------------------------------------------------
@@ -111,6 +120,9 @@ export const rooms = [
     openings: [
       { side: "south", offset: ft(0, 0), width: ft(3, 3), type: "opening" }, // to passage
     ],
+    // The solid 6'-10" between the balcony slider (SD2) and the Parents Room
+    // door (D2). Sofa against the kitchen wall opposite, ~9' viewing distance.
+    tvWall: { side: "west", offset: ft(6, 7.5), width: ft(6, 10), tv: 65 },
   },
   {
     id: "passage",
@@ -186,7 +198,9 @@ export const rooms = [
     openings: [
       { side: "west", offset: ft(0, 4), width: ft(4, 4), type: "opening" }, // to living
       { side: "east", offset: ft(1, 3), width: ft(3, 6), type: "door", hinge: "start", swing: "in" }, // main door
-      { side: "south", offset: ft(0, 0), width: ft(4, 0), type: "opening" }, // to kitchen
+      // To kitchen. West 15 3/4" is a wall stub behind the kitchen mandir
+      // (designer's kitchen plan, 2026-10-05), so the opening is 2'-8 1/4".
+      { side: "south", offset: ft(1, 3.75), width: ft(2, 8.25), type: "opening" },
     ],
   },
   {
@@ -208,7 +222,11 @@ export const rooms = [
     x: ft(26, 11),
     z: ft(19, 5),
     openings: [
-      { side: "north", offset: ft(0, 0), width: ft(7, 6), type: "glass" }, // to kitchen
+      // Sliding glass to the kitchen: from the west wall up to where the
+      // worktop (2'-0 1/2" deep along the east wall) begins (owner, 2026-10-05).
+      { side: "north", offset: ft(0, 0), width: ft(5, 5.5), type: "glass", slide: "utility_door" },
+      // The end of the balcony, onto the building's inner shaft (owner, 2026-10-06)
+      { side: "south", offset: ft(0, 0), width: ft(7, 6), type: "railing" },
     ],
   },
   {

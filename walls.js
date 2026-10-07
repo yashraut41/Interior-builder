@@ -117,6 +117,7 @@ for (const zone of zones) {
       across: [a0, a1],
       roomSide: dir < 0 ? 1 : 0,
       height: OPENING_TYPES[o.type].height,
+      sill: OPENING_TYPES[o.type].sill ?? 0, // wall kept below this (railing)
       cut: horizontal ? { x0: s, x1: e, z0: a0, z1: a1 } : { x0: a0, x1: a1, z0: s, z1: e },
     });
   }

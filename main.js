@@ -5,6 +5,7 @@ import { rooms, hotspotRooms, EYE_HEIGHT, WALL_HEIGHT, PLAN_UP_BEARING } from ".
 import { buildAllRooms, getFlatBounds } from "./rooms.js";
 import { zones, wallRects, openingRects, wallBounds } from "./walls.js";
 import { sunPosition, sunDirection } from "./sun.js";
+import { THEMES, DEFAULT_THEME, applyKitchenTheme } from "./kitchen.js";
 
 // ---------------------------------------------------------------------------
 // Scene setup
@@ -57,7 +58,7 @@ scene.environmentIntensity = 0.3;
 pmrem.dispose();
 
 // Geometry, generated entirely from roomData.js
-const { ceilingGroup, paints } = buildAllRooms(scene);
+const { ceilingGroup, paints, sliders, kitchenMaterials } = buildAllRooms(scene);
 const bounds = getFlatBounds();
 
 // ---------------------------------------------------------------------------
@@ -274,6 +275,92 @@ paintResetBtn.addEventListener("click", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Utility sliding door — an Open / Close button while you're in the kitchen
+// or the utility. The panel glides across; walking through needs it open.
+// ---------------------------------------------------------------------------
+
+const doorPanelEl = document.getElementById("door-panel");
+const doorBtn = document.getElementById("door-btn");
+const DOOR_ROOMS = new Set(["kitchen", "dry_balcony"]);
+const DOOR_TIME = 0.9; // seconds to slide fully
+const door = { slider: sliders.utility_door, t: 0, open: false };
+
+/** Door button inside the kitchen / utility; theme picker there and in the dollhouse. */
+function showKitchenPanels(room) {
+  const inKitchen = room && DOOR_ROOMS.has(room.id);
+  doorPanelEl.classList.toggle("hidden", !(door.slider && inKitchen));
+  themePanelEl.classList.toggle("hidden", !!room && !inKitchen);
+}
+
+doorBtn.addEventListener("click", () => {
+  door.open = !door.open;
+  doorBtn.textContent = door.open ? "Close utility door" : "Open utility door";
+});
+
+function updateDoor(dt) {
+  const target = door.open ? 1 : 0;
+  if (!door.slider || door.t === target) return;
+  door.t = THREE.MathUtils.clamp(door.t + (Math.sign(target - door.t) * dt) / DOOR_TIME, 0, 1);
+  door.slider.set(door.t * door.t * (3 - 2 * door.t)); // ease in and out
+}
+
+// ---------------------------------------------------------------------------
+// Kitchen theme — one click recolours cabinets, worktop, backsplash, metal
+// accents (kitchen.js THEMES) and the kitchen + utility walls. Walls go
+// through the wall colour picks, so the Wall colour panel follows and can
+// still fine-tune them.
+// ---------------------------------------------------------------------------
+
+const THEME_STORE = "kitchenTheme";
+const THEME_WALLS = ["kitchen", "dry_balcony"];
+const themePanelEl = document.getElementById("theme-panel");
+const themeSwatchesEl = document.getElementById("theme-swatches");
+const themeNameEl = document.getElementById("theme-name");
+const hex = (n) => `#${n.toString(16).padStart(6, "0")}`;
+
+let kitchenTheme = DEFAULT_THEME;
+try {
+  kitchenTheme = localStorage.getItem(THEME_STORE) ?? DEFAULT_THEME;
+} catch {}
+
+const swatches = THEMES.map((t) => {
+  const b = document.createElement("button");
+  b.className = "theme-swatch";
+  b.setAttribute("role", "radio");
+  b.title = t.name;
+  b.setAttribute("aria-label", t.name);
+  for (const part of ["upper", "counter", "base"]) {
+    const span = document.createElement("span");
+    span.className = part;
+    span.style.background = hex(t[part]);
+    b.append(span);
+  }
+  b.addEventListener("click", () => setKitchenTheme(t.id));
+  themeSwatchesEl.append(b);
+  return b;
+});
+
+/** `walls: false` on load, so saved wall colour picks aren't overwritten. */
+function setKitchenTheme(id, { walls = true } = {}) {
+  const theme = applyKitchenTheme(kitchenMaterials, id);
+  kitchenTheme = theme.id;
+  if (walls) {
+    for (const roomId of THEME_WALLS) {
+      paints[roomId].color.set(theme.wall);
+      paintPicks[roomId] = hex(theme.wall);
+    }
+    savePaintPicks();
+    showPaint();
+  }
+  THEMES.forEach((t, i) => swatches[i].setAttribute("aria-checked", String(t.id === theme.id)));
+  themeNameEl.replaceChildren(theme.name, Object.assign(document.createElement("small"), { textContent: theme.note }));
+  try {
+    localStorage.setItem(THEME_STORE, theme.id);
+  } catch {}
+}
+setKitchenTheme(kitchenTheme, { walls: false });
+
+// ---------------------------------------------------------------------------
 // Dollhouse (overview) controls
 // ---------------------------------------------------------------------------
 
@@ -384,6 +471,7 @@ function setCurrentRoom(room) {
   currentRoom = room;
   roomLabelEl.textContent = room.name;
   layoutHotspots(room.id);
+  showKitchenPanels(room);
   if (paints[room.id]) {
     paintRoomEl.value = room.id;
     showPaint();
@@ -408,6 +496,7 @@ function exitPanoMode() {
   currentRoom = null;
   heldKeys.clear();
   layoutHotspots(null);
+  showKitchenPanels(null);
   hideHotspotTip();
   ceilingGroup.visible = false;
   backBtn.classList.add("hidden");
@@ -439,6 +528,7 @@ exportBtn.addEventListener("click", () => {
   flat.name = "flat_option1";
   const exported = buildAllRooms(flat);
   for (const [id, m] of Object.entries(exported.paints)) m.color.copy(paints[id].color);
+  applyKitchenTheme(exported.kitchenMaterials, kitchenTheme);
 
   const json = JSON.stringify(flat.toJSON());
   const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
@@ -666,14 +756,18 @@ function leadsOutside(o) {
 }
 
 const passableOpenings = openingRects.filter(
-  (r) => r.opening.type !== "window" && !leadsOutside(r.opening)
+  (r) => r.opening.type !== "window" && !r.opening.sill && !leadsOutside(r.opening)
 );
 const blockers = [...wallRects, ...openingRects.filter((r) => !passableOpenings.includes(r))];
 
+/** A sliding door's opening only lets you through once the door is open. */
+const shut = (r) => r.opening.slide && !(door.open && door.t > 0.9);
+
 function canStand(x, z) {
-  const onFloor = zones.some((q) => insideRect(q, x, z)) || passableOpenings.some((r) => insideRect(r, x, z));
+  const onFloor =
+    zones.some((q) => insideRect(q, x, z)) || passableOpenings.some((r) => !shut(r) && insideRect(r, x, z));
   if (!onFloor) return false;
-  return !blockers.some((r) => {
+  return ![...blockers, ...passableOpenings.filter(shut)].some((r) => {
     const dx = Math.max(r.x0 - x, 0, x - r.x1);
     const dz = Math.max(r.z0 - z, 0, z - r.z1);
     return dx * dx + dz * dz < BODY_RADIUS * BODY_RADIUS;
@@ -856,6 +950,7 @@ function animate(now) {
   requestAnimationFrame(animate);
   const dt = Math.min(0.05, (now - lastFrame) / 1000); // clamp after a stall
   advanceSun(dt * 1000);
+  updateDoor(dt);
   lastFrame = now;
 
   if (mode === "dollhouse") {
