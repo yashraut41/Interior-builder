@@ -25,11 +25,13 @@ export const LAYOUTS = [
   {
     id: "balanced",
     name: "1 · Balanced",
-    note: "6' desk on the south wall, 4'6\" bed headboard-south",
-    wardrobe: { x: 0, z: 0, w: 72, d: 24, wall: "north" },
+    note: "L-desk 6' + 3' return NW (face north), 6' wardrobe south wall, 4'6\" bed headboard-south",
+    // Coder first's L-desk in the same north-west spot, so you work facing
+    // north; the 6' wardrobe swaps to the south wall beside the headboard.
+    wardrobe: { x: 0, z: 96, w: 72, d: 24, wall: "south" },
     bed: { x: 75, z: 41, w: 58, l: 79, head: "south", pillows: 2 },
-    desk: { tops: [{ x: 0, z: 90, w: 72, l: 30 }], wall: "south", monitors: 2 },
-    chair: { x: 36, z: 72, facing: "south" },
+    desk: { tops: [{ x: 0, z: 0, w: 72, l: 30 }, { x: 0, z: 30, w: 30, l: 36 }], wall: "north", monitors: 2 },
+    chair: { x: 44, z: 46, facing: "north" },
   },
   {
     id: "designer",
