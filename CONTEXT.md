@@ -176,6 +176,17 @@ kitchen, utility) switches live; the pick is remembered per browser. Walls go
 through the wall colour picks, so that panel can still fine-tune them.
 Mandir, appliances, hob, steel stay fixed across themes.
 
+**Yash Room layouts** (2026-10-07): `yashRoom.js` — true-size planning
+blocks for the owner's home-coding setup, switchable live from the "Yash Room
+layout" panel (dollhouse + Yash Room; remembered per browser):
+1 Balanced (6' desk south wall, 4'6" bed headboard-south, 6' wardrobe NW),
+1b Designer's (interior designer's suggestion: Balanced with the bed turned
+east-west along the south wall, so the desk drops to 4'), 2 Coder first
+(L-desk 6' + 3' return in the NW corner, 3'6" bed along the south wall,
+4' wardrobe + loft SW). Owner leans to 2. Desks sit on the north/south walls
+so the glass wall gives side light, not screen glare. Collision doesn't know
+the furniture yet.
+
 `/#<room_id>` (e.g. `/#yash_room`) opens straight into that room.
 
 ## Accuracy status

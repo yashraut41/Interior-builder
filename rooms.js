@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { rooms, WALL_HEIGHT, DOOR_HEIGHT } from "./roomData.js";
 import { wallRects, openingRects, openings, roomBounds, isWalled } from "./walls.js";
 import { buildKitchen } from "./kitchen.js";
+import { buildYashLayouts } from "./yashRoom.js";
 
 const FLOOR_COLOR = 0xcdc2ad;
 const OPEN_FLOOR_COLOR = 0xbdb199;
@@ -501,7 +502,8 @@ export function buildRoomGroup(room) {
  * Builds every zone. Ceilings go into their own group so the dollhouse view
  * can hide them wholesale. `paints` maps room id -> wall paint material, for
  * recolouring live; `sliders` maps a sliding door's id -> { set(t) } (0 shut,
- * 1 open); `kitchenMaterials` is what applyKitchenTheme() recolours.
+ * 1 open); `kitchenMaterials` is what applyKitchenTheme() recolours;
+ * `yashLayouts` maps layout id -> group (all hidden; show one).
  */
 export function buildAllRooms(scene) {
   const groups = {};
@@ -519,12 +521,14 @@ export function buildAllRooms(scene) {
 
   const kitchen = buildKitchen();
   scene.add(kitchen.group);
+  const yashLayouts = buildYashLayouts();
+  for (const g of Object.values(yashLayouts)) scene.add(g);
   ceilingGroup.add(kitchen.ceiling);
 
   const walls = buildWalls();
   scene.add(walls.group);
   scene.add(ceilingGroup);
-  return { groups, ceilingGroup, paints, sliders: walls.sliders, kitchenMaterials: kitchen.materials };
+  return { groups, ceilingGroup, paints, sliders: walls.sliders, kitchenMaterials: kitchen.materials, yashLayouts };
 }
 
 /** Bounding box of the whole flat, used to frame the dollhouse camera. */

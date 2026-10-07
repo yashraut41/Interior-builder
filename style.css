@@ -187,6 +187,28 @@ html, body {
   color: rgba(255, 255, 255, 0.65);
 }
 
+/* Yash Room layout switcher */
+#layout-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#panels .layout-option {
+  text-align: left;
+}
+
+#panels .layout-option[aria-checked="true"] {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #fff;
+}
+
+#layout-note {
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.65);
+}
+
 #panels select option {
   color: #111;
 }

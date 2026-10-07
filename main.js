@@ -6,6 +6,7 @@ import { buildAllRooms, getFlatBounds } from "./rooms.js";
 import { zones, wallRects, openingRects, wallBounds } from "./walls.js";
 import { sunPosition, sunDirection } from "./sun.js";
 import { THEMES, DEFAULT_THEME, applyKitchenTheme } from "./kitchen.js";
+import { LAYOUTS, DEFAULT_LAYOUT } from "./yashRoom.js";
 
 // ---------------------------------------------------------------------------
 // Scene setup
@@ -58,7 +59,7 @@ scene.environmentIntensity = 0.3;
 pmrem.dispose();
 
 // Geometry, generated entirely from roomData.js
-const { ceilingGroup, paints, sliders, kitchenMaterials } = buildAllRooms(scene);
+const { ceilingGroup, paints, sliders, kitchenMaterials, yashLayouts } = buildAllRooms(scene);
 const bounds = getFlatBounds();
 
 // ---------------------------------------------------------------------------
@@ -285,11 +286,16 @@ const DOOR_ROOMS = new Set(["kitchen", "dry_balcony"]);
 const DOOR_TIME = 0.9; // seconds to slide fully
 const door = { slider: sliders.utility_door, t: 0, open: false };
 
-/** Door button inside the kitchen / utility; theme picker there and in the dollhouse. */
-function showKitchenPanels(room) {
+/**
+ * Room-specific panels: door button inside the kitchen / utility; theme
+ * picker there and in the dollhouse; Yash Room layouts there and in the
+ * dollhouse. `room` is null in the dollhouse.
+ */
+function showRoomPanels(room) {
   const inKitchen = room && DOOR_ROOMS.has(room.id);
   doorPanelEl.classList.toggle("hidden", !(door.slider && inKitchen));
   themePanelEl.classList.toggle("hidden", !!room && !inKitchen);
+  layoutPanelEl.classList.toggle("hidden", !!room && room.id !== "yash_room");
 }
 
 doorBtn.addEventListener("click", () => {
@@ -359,6 +365,42 @@ function setKitchenTheme(id, { walls = true } = {}) {
   } catch {}
 }
 setKitchenTheme(kitchenTheme, { walls: false });
+
+// ---------------------------------------------------------------------------
+// Yash Room layout — switch between furniture layouts (yashRoom.js) live.
+// ---------------------------------------------------------------------------
+
+const LAYOUT_STORE = "yashLayout";
+const layoutPanelEl = document.getElementById("layout-panel");
+const layoutOptionsEl = document.getElementById("layout-options");
+const layoutNoteEl = document.getElementById("layout-note");
+
+let yashLayout = DEFAULT_LAYOUT;
+try {
+  yashLayout = localStorage.getItem(LAYOUT_STORE) ?? DEFAULT_LAYOUT;
+} catch {}
+
+const layoutButtons = LAYOUTS.map((l) => {
+  const b = document.createElement("button");
+  b.className = "layout-option";
+  b.setAttribute("role", "radio");
+  b.textContent = l.name;
+  b.addEventListener("click", () => setYashLayout(l.id));
+  layoutOptionsEl.append(b);
+  return b;
+});
+
+function setYashLayout(id) {
+  const layout = LAYOUTS.find((l) => l.id === id) ?? LAYOUTS.find((l) => l.id === DEFAULT_LAYOUT);
+  yashLayout = layout.id;
+  for (const [lid, g] of Object.entries(yashLayouts)) g.visible = lid === layout.id;
+  LAYOUTS.forEach((l, i) => layoutButtons[i].setAttribute("aria-checked", String(l.id === layout.id)));
+  layoutNoteEl.textContent = layout.note;
+  try {
+    localStorage.setItem(LAYOUT_STORE, layout.id);
+  } catch {}
+}
+setYashLayout(yashLayout);
 
 // ---------------------------------------------------------------------------
 // Dollhouse (overview) controls
@@ -471,7 +513,7 @@ function setCurrentRoom(room) {
   currentRoom = room;
   roomLabelEl.textContent = room.name;
   layoutHotspots(room.id);
-  showKitchenPanels(room);
+  showRoomPanels(room);
   if (paints[room.id]) {
     paintRoomEl.value = room.id;
     showPaint();
@@ -496,7 +538,7 @@ function exitPanoMode() {
   currentRoom = null;
   heldKeys.clear();
   layoutHotspots(null);
-  showKitchenPanels(null);
+  showRoomPanels(null);
   hideHotspotTip();
   ceilingGroup.visible = false;
   backBtn.classList.add("hidden");
@@ -529,6 +571,7 @@ exportBtn.addEventListener("click", () => {
   const exported = buildAllRooms(flat);
   for (const [id, m] of Object.entries(exported.paints)) m.color.copy(paints[id].color);
   applyKitchenTheme(exported.kitchenMaterials, kitchenTheme);
+  for (const [id, g] of Object.entries(exported.yashLayouts)) g.visible = id === yashLayout;
 
   const json = JSON.stringify(flat.toJSON());
   const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
