@@ -5,27 +5,18 @@
 <path d="M309.57,200.04H951.94V210.33H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M309.57,210.33H509.60V211.47H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M818.21,210.33H951.94V211.47H818.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,211.47H321.00V220.62H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M818.21,211.47H830.78V220.62H818.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M940.51,211.47H951.94V220.62H940.51Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,220.62H321.00V245.76H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M940.51,220.62H951.94V245.76H940.51Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,245.76H321.00V339.49H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,339.49H321.00V341.78H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M818.21,339.49H830.78V341.78H818.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,341.78H321.00V348.63H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M818.21,341.78H830.78V348.63H818.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M940.51,341.78H951.94V348.63H940.51Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,348.63H321.00V350.92H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M818.21,348.63H830.78V350.92H818.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M940.51,348.63H1057.10V350.92H940.51Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,350.92H321.00V360.06H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M818.21,350.92H866.79V360.06H818.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M940.51,350.92H1057.10V360.06H940.51Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,360.06H321.00V362.35H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M818.21,360.06H830.78V362.35H818.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M1045.66,360.06H1057.10V362.35H1045.66Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M309.57,362.35H321.00V392.07H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M818.21,362.35H830.78V392.07H818.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M1045.66,362.35H1057.10V392.07H1045.66Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M309.57,392.07H509.60V401.21H309.57Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
@@ -139,7 +130,6 @@
 <path d="M826.21,1091.58H837.64V1101.87H826.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M323.29,1101.87H510.74V1103.01H323.29Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M826.21,1101.87H837.64V1103.01H826.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
-<path d="M323.29,1103.01H334.72V1237.89H323.29Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M826.21,1103.01H837.64V1237.89H826.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M323.29,1237.89H510.74V1249.32H323.29Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
 <path d="M826.21,1237.89H837.64V1249.32H826.21Z" fill="#3c3c3c" shape-rendering="crispEdges"/>
@@ -152,7 +142,7 @@
 <line x1="309.57" y1="200.04" x2="498.17" y2="200.04" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="829.64" y1="200.04" x2="951.94" y2="200.04" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="509.60" y1="210.33" x2="818.21" y2="210.33" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
-<line x1="321.00" y1="211.47" x2="509.60" y2="211.47" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="309.57" y1="211.47" x2="509.60" y2="211.47" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="830.78" y1="211.47" x2="940.51" y2="211.47" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="818.21" y1="220.62" x2="830.78" y2="220.62" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="940.51" y1="245.76" x2="951.94" y2="245.76" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
@@ -162,7 +152,7 @@
 <line x1="830.78" y1="350.92" x2="866.79" y2="350.92" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="830.78" y1="360.06" x2="866.79" y2="360.06" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="940.51" y1="360.06" x2="1045.66" y2="360.06" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
-<line x1="321.00" y1="392.07" x2="509.60" y2="392.07" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="309.57" y1="392.07" x2="509.60" y2="392.07" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="182.70" y1="401.21" x2="309.57" y2="401.21" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="182.70" y1="412.64" x2="498.17" y2="412.64" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="498.17" y1="579.52" x2="509.60" y2="579.52" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
@@ -200,9 +190,9 @@
 <line x1="743.91" y1="959.00" x2="826.21" y2="959.00" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="182.70" y1="1090.44" x2="498.17" y2="1090.44" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="182.70" y1="1101.87" x2="323.29" y2="1101.87" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
-<line x1="334.72" y1="1103.01" x2="510.74" y2="1103.01" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="323.29" y1="1103.01" x2="510.74" y2="1103.01" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="323.29" y1="1237.89" x2="510.74" y2="1237.89" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="323.29" y1="1249.32" x2="499.31" y2="1249.32" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
-<line x1="334.72" y1="1237.89" x2="510.74" y2="1237.89" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="499.31" y1="1269.89" x2="837.64" y2="1269.89" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="510.74" y1="1258.46" x2="826.21" y2="1258.46" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="498.17" y1="198.90" x2="498.17" y2="200.04" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
@@ -211,7 +201,8 @@
 <line x1="498.17" y1="816.12" x2="498.17" y2="825.26" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="498.17" y1="907.56" x2="498.17" y2="1090.44" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="829.64" y1="198.90" x2="829.64" y2="200.04" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
-<line x1="309.57" y1="200.04" x2="309.57" y2="401.21" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="309.57" y1="200.04" x2="309.57" y2="211.47" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="309.57" y1="392.07" x2="309.57" y2="401.21" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="951.94" y1="200.04" x2="951.94" y2="245.76" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="951.94" y1="341.78" x2="951.94" y2="348.63" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="509.60" y1="210.33" x2="509.60" y2="211.47" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
@@ -221,7 +212,6 @@
 <line x1="509.60" y1="907.56" x2="509.60" y2="947.56" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="818.21" y1="210.33" x2="818.21" y2="220.62" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="818.21" y1="339.49" x2="818.21" y2="676.67" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
-<line x1="321.00" y1="211.47" x2="321.00" y2="392.07" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="830.78" y1="211.47" x2="830.78" y2="220.62" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="830.78" y1="339.49" x2="830.78" y2="350.92" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="830.78" y1="360.06" x2="830.78" y2="947.56" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
@@ -260,10 +250,14 @@
 <line x1="743.91" y1="947.56" x2="743.91" y2="959.00" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="837.64" y1="947.56" x2="837.64" y2="1269.89" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="826.21" y1="959.00" x2="826.21" y2="1258.46" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
-<line x1="323.29" y1="1101.87" x2="323.29" y2="1249.32" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
-<line x1="334.72" y1="1103.01" x2="334.72" y2="1237.89" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="323.29" y1="1101.87" x2="323.29" y2="1103.01" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="323.29" y1="1237.89" x2="323.29" y2="1249.32" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="830.78" y1="796.69" x2="1036.52" y2="796.69" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 <line x1="830.78" y1="808.12" x2="1036.52" y2="808.12" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="309.57" y1="211.47" x2="309.57" y2="392.07" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="321.00" y1="211.47" x2="321.00" y2="392.07" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="323.29" y1="1103.01" x2="323.29" y2="1237.89" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
+<line x1="334.72" y1="1103.01" x2="334.72" y2="1237.89" stroke="#000" stroke-width="1.60" stroke-linecap="square"/>
 </g>
 <g id="A-WALL-HEAD">
 <line x1="509.60" y1="676.67" x2="598.75" y2="676.67" stroke="#000" stroke-width="0.60" stroke-dasharray="7.2 4.5" stroke-linecap="square"/>
@@ -303,8 +297,10 @@
 <line x1="830.78" y1="802.40" x2="1036.52" y2="802.40" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
 <polygon points="501.46,211.47 501.46,306.27 504.16,306.27 504.16,211.47" fill="#fff" stroke="#000" stroke-width="0.60"/>
 <polygon points="504.75,297.27 504.75,392.07 507.45,392.07 507.45,297.27" fill="#fff" stroke="#000" stroke-width="0.60"/>
+<line x1="315.29" y1="211.47" x2="315.29" y2="392.07" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
 <polygon points="501.85,1103.01 501.85,1174.95 504.55,1174.95 504.55,1103.01" fill="#fff" stroke="#000" stroke-width="0.60"/>
 <polygon points="505.50,1165.95 505.50,1237.89 508.20,1237.89 508.20,1165.95" fill="#fff" stroke="#000" stroke-width="0.60"/>
+<line x1="329.00" y1="1103.01" x2="329.00" y2="1237.89" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
 </g>
 <g id="A-FLOR-OTLN">
 <polygon points="830.78,809.26 913.08,809.26 913.08,1015.00 830.78,1015.00" fill="none" stroke="#000" stroke-width="0.60" stroke-dasharray="7.2 4.5"/>
@@ -498,8 +494,12 @@
 <text x="554.18" y="925.96" font-size="9.38" text-anchor="middle" dominant-baseline="central">D2</text>
 <circle cx="531.20" cy="301.77" r="13.50" fill="#fff" stroke="#000" stroke-width="0.80"/>
 <text x="531.20" y="301.77" font-size="9.38" text-anchor="middle" dominant-baseline="central">SD1</text>
+<circle cx="287.97" cy="301.77" r="13.50" fill="#fff" stroke="#000" stroke-width="0.80"/>
+<text x="287.97" y="301.77" font-size="9.38" text-anchor="middle" dominant-baseline="central">G1</text>
 <circle cx="532.34" cy="1170.45" r="13.50" fill="#fff" stroke="#000" stroke-width="0.80"/>
 <text x="532.34" y="1170.45" font-size="9.38" text-anchor="middle" dominant-baseline="central">SD3</text>
+<circle cx="301.69" cy="1170.45" r="13.50" fill="#fff" stroke="#000" stroke-width="0.80"/>
+<text x="301.69" y="1170.45" font-size="9.38" text-anchor="middle" dominant-baseline="central">G2</text>
 <circle cx="1615.10" cy="108.90" r="28.80" fill="#fff" stroke="#000" stroke-width="0.80"/>
 <polygon points="1615.10,72.90 1627.69,128.70 1615.10,117.90 1602.49,128.70" fill="none" stroke="#000" stroke-width="0.80"/>
 <path d="M1615.10,72.90L1615.10,117.90L1602.49,128.70Z" fill="#000" shape-rendering="crispEdges"/>
@@ -551,16 +551,16 @@
 <text x="1534.10" y="360.00" font-size="8.75" text-anchor="start" dominant-baseline="central">9'-5&quot; X 10'-0&quot;</text>
 <text x="1633.09" y="360.00" font-size="8.75" text-anchor="start" dominant-baseline="central">1</text>
 <text x="1246.10" y="376.20" font-size="8.75" text-anchor="start" dominant-baseline="central">SD1</text>
-<text x="1295.60" y="376.20" font-size="8.75" text-anchor="start" dominant-baseline="central">SLIDING GLASS DOOR, FLOOR TO CEILING</text>
-<text x="1534.10" y="376.20" font-size="8.75" text-anchor="start" dominant-baseline="central">6'-7&quot; X 10'-0&quot;</text>
+<text x="1295.60" y="376.20" font-size="8.75" text-anchor="start" dominant-baseline="central">SLIDING GLASS DOOR</text>
+<text x="1534.10" y="376.20" font-size="8.75" text-anchor="start" dominant-baseline="central">6'-7&quot; X 7'-0&quot;</text>
 <text x="1633.09" y="376.20" font-size="8.75" text-anchor="start" dominant-baseline="central">1</text>
 <text x="1246.10" y="392.40" font-size="8.75" text-anchor="start" dominant-baseline="central">SD2</text>
-<text x="1295.60" y="392.40" font-size="8.75" text-anchor="start" dominant-baseline="central">SLIDING GLASS DOOR, FLOOR TO CEILING</text>
+<text x="1295.60" y="392.40" font-size="8.75" text-anchor="start" dominant-baseline="central">SLIDING GLASS DOOR</text>
 <text x="1534.10" y="392.40" font-size="8.75" text-anchor="start" dominant-baseline="central">5'-6&quot; X 10'-0&quot;</text>
 <text x="1633.09" y="392.40" font-size="8.75" text-anchor="start" dominant-baseline="central">1</text>
 <text x="1246.10" y="408.60" font-size="8.75" text-anchor="start" dominant-baseline="central">SD3</text>
-<text x="1295.60" y="408.60" font-size="8.75" text-anchor="start" dominant-baseline="central">SLIDING GLASS DOOR, FLOOR TO CEILING</text>
-<text x="1534.10" y="408.60" font-size="8.75" text-anchor="start" dominant-baseline="central">4'-11&quot; X 10'-0&quot;</text>
+<text x="1295.60" y="408.60" font-size="8.75" text-anchor="start" dominant-baseline="central">SLIDING GLASS DOOR</text>
+<text x="1534.10" y="408.60" font-size="8.75" text-anchor="start" dominant-baseline="central">4'-11&quot; X 7'-0&quot;</text>
 <text x="1633.09" y="408.60" font-size="8.75" text-anchor="start" dominant-baseline="central">1</text>
 <text x="1246.10" y="424.80" font-size="8.75" text-anchor="start" dominant-baseline="central">OP1</text>
 <text x="1295.60" y="424.80" font-size="8.75" text-anchor="start" dominant-baseline="central">OPENING, NO SHUTTER</text>
@@ -578,73 +578,81 @@
 <text x="1295.60" y="473.40" font-size="8.75" text-anchor="start" dominant-baseline="central">HALF WALL 3'-0&quot; + METAL RAILING</text>
 <text x="1534.10" y="473.40" font-size="8.75" text-anchor="start" dominant-baseline="central">7'-6&quot; X 10'-0&quot;</text>
 <text x="1633.09" y="473.40" font-size="8.75" text-anchor="start" dominant-baseline="central">1</text>
-<text x="1246.10" y="516.60" font-size="15.00" text-anchor="start" dominant-baseline="central">AREA STATEMENT (CLEAR FLOOR AREA)</text>
-<line x1="1246.10" y1="527.40" x2="1660.10" y2="527.40" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
-<text x="1246.10" y="548.10" font-size="8.75" text-anchor="start" dominant-baseline="central">LIVING &amp; DINING</text>
-<text x="1660.10" y="548.10" font-size="8.75" text-anchor="end" dominant-baseline="central">191.2 SQ.FT</text>
-<text x="1246.10" y="563.40" font-size="8.75" text-anchor="start" dominant-baseline="central">PASSAGE</text>
-<text x="1660.10" y="563.40" font-size="8.75" text-anchor="end" dominant-baseline="central">32.2 SQ.FT</text>
-<text x="1246.10" y="578.70" font-size="8.75" text-anchor="start" dominant-baseline="central">PARENTS ROOM</text>
-<text x="1660.10" y="578.70" font-size="8.75" text-anchor="end" dominant-baseline="central">104.4 SQ.FT</text>
-<text x="1246.10" y="594.00" font-size="8.75" text-anchor="start" dominant-baseline="central">TOILET (YASH)</text>
-<text x="1660.10" y="594.00" font-size="8.75" text-anchor="end" dominant-baseline="central">35.3 SQ.FT</text>
-<text x="1246.10" y="609.30" font-size="8.75" text-anchor="start" dominant-baseline="central">YASH ROOM</text>
-<text x="1660.10" y="609.30" font-size="8.75" text-anchor="end" dominant-baseline="central">110.8 SQ.FT</text>
-<text x="1246.10" y="624.60" font-size="8.75" text-anchor="start" dominant-baseline="central">ENTRANCE LOBBY</text>
-<text x="1660.10" y="624.60" font-size="8.75" text-anchor="end" dominant-baseline="central">20.3 SQ.FT</text>
-<text x="1246.10" y="639.90" font-size="8.75" text-anchor="start" dominant-baseline="central">KITCHEN</text>
-<text x="1660.10" y="639.90" font-size="8.75" text-anchor="end" dominant-baseline="central">90.7 SQ.FT</text>
-<text x="1246.10" y="655.20" font-size="8.75" text-anchor="start" dominant-baseline="central">DRY BALCONY</text>
-<text x="1660.10" y="655.20" font-size="8.75" text-anchor="end" dominant-baseline="central">29.4 SQ.FT</text>
-<text x="1246.10" y="670.50" font-size="8.75" text-anchor="start" dominant-baseline="central">SERVICE PLATFORM</text>
-<text x="1660.10" y="670.50" font-size="8.75" text-anchor="end" dominant-baseline="central">22.5 SQ.FT</text>
-<text x="1246.10" y="685.80" font-size="8.75" text-anchor="start" dominant-baseline="central">COMMON TOILET</text>
-<text x="1660.10" y="685.80" font-size="8.75" text-anchor="end" dominant-baseline="central">36.0 SQ.FT</text>
-<text x="1246.10" y="701.10" font-size="8.75" text-anchor="start" dominant-baseline="central">TOILET (BHAGYESH)</text>
-<text x="1660.10" y="701.10" font-size="8.75" text-anchor="end" dominant-baseline="central">36.7 SQ.FT</text>
-<text x="1246.10" y="716.40" font-size="8.75" text-anchor="start" dominant-baseline="central">BHAGYESH ROOM</text>
-<text x="1660.10" y="716.40" font-size="8.75" text-anchor="end" dominant-baseline="central">125.5 SQ.FT</text>
-<text x="1246.10" y="731.70" font-size="8.75" text-anchor="start" dominant-baseline="central">BALCONY (LIVING)</text>
-<text x="1660.10" y="731.70" font-size="8.75" text-anchor="end" dominant-baseline="central">42.8 SQ.FT</text>
-<text x="1246.10" y="747.00" font-size="8.75" text-anchor="start" dominant-baseline="central">BALCONY (BHAGYESH)</text>
-<text x="1660.10" y="747.00" font-size="8.75" text-anchor="end" dominant-baseline="central">29.5 SQ.FT</text>
-<line x1="1552.10" y1="755.10" x2="1660.10" y2="755.10" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
-<text x="1246.10" y="764.10" font-size="9.38" text-anchor="start" dominant-baseline="central">TOTAL OF ZONES ABOVE</text>
-<text x="1660.10" y="764.10" font-size="9.38" text-anchor="end" dominant-baseline="central">907.4 SQ.FT</text>
-<text x="1246.10" y="807.30" font-size="15.00" text-anchor="start" dominant-baseline="central">NOTES</text>
-<line x1="1246.10" y1="818.10" x2="1660.10" y2="818.10" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
-<text x="1246.10" y="838.80" font-size="8.75" text-anchor="start" dominant-baseline="central">1. ALL DIMENSIONS IN FEET-INCHES. DO NOT SCALE DRAWING.</text>
-<text x="1246.10" y="854.10" font-size="8.75" text-anchor="start" dominant-baseline="central">2. ROOM SIZES ARE CLEAR INTERNAL DIMENSIONS.</text>
-<text x="1246.10" y="869.40" font-size="8.75" text-anchor="start" dominant-baseline="central">3. WALLS 0'-5&quot; THK. UNLESS DIMENSIONED OTHERWISE.</text>
-<text x="1246.10" y="884.70" font-size="8.75" text-anchor="start" dominant-baseline="central">4. FLOOR TO CEILING 10'-0&quot;. DOOR / OPENING HEAD 7'-0&quot;.</text>
-<text x="1246.10" y="900.00" font-size="8.75" text-anchor="start" dominant-baseline="central">5. ROOM SIZES FROM DEVELOPER PLAN 'OPTION 1'. ROOM POSITIONS</text>
-<text x="1246.10" y="915.30" font-size="8.75" text-anchor="start" dominant-baseline="central">   TRACED FROM THAT PLAN - VERIFY ON SITE BEFORE FABRICATION.</text>
-<text x="1246.10" y="930.60" font-size="8.75" text-anchor="start" dominant-baseline="central">6. DOOR AND GLAZING SIZES / POSITIONS NOMINAL, NOT MEASURED.</text>
-<text x="1246.10" y="945.90" font-size="8.75" text-anchor="start" dominant-baseline="central">7. NORTH AS PER DEVELOPER PLAN - TO BE CONFIRMED ON SITE.</text>
-<text x="1253.30" y="1008.90" font-size="8.13" text-anchor="start" dominant-baseline="central">PROJECT</text>
-<text x="1358.60" y="1008.90" font-size="10.00" text-anchor="start" dominant-baseline="central">RESIDENTIAL FLAT - PUNE</text>
-<text x="1253.30" y="1032.30" font-size="8.13" text-anchor="start" dominant-baseline="central">DRAWING</text>
-<text x="1358.60" y="1032.30" font-size="10.00" text-anchor="start" dominant-baseline="central">FLOOR PLAN - OPTION 1</text>
-<text x="1253.30" y="1055.70" font-size="8.13" text-anchor="start" dominant-baseline="central">CARPET AREA</text>
-<text x="1358.60" y="1055.70" font-size="10.00" text-anchor="start" dominant-baseline="central">940 SQ.FT (AS PER DEVELOPER PLAN)</text>
-<text x="1253.30" y="1079.10" font-size="8.13" text-anchor="start" dominant-baseline="central">SCALE</text>
-<text x="1358.60" y="1079.10" font-size="10.00" text-anchor="start" dominant-baseline="central">GRAPHIC - SEE SCALE BAR</text>
-<text x="1253.30" y="1102.50" font-size="8.13" text-anchor="start" dominant-baseline="central">UNITS</text>
-<text x="1358.60" y="1102.50" font-size="10.00" text-anchor="start" dominant-baseline="central">FEET-INCHES (DXF: INCHES)</text>
-<text x="1253.30" y="1125.90" font-size="8.13" text-anchor="start" dominant-baseline="central">DATE</text>
-<text x="1358.60" y="1125.90" font-size="10.00" text-anchor="start" dominant-baseline="central">2026-10-05</text>
-<text x="1253.30" y="1149.30" font-size="8.13" text-anchor="start" dominant-baseline="central">SOURCE</text>
-<text x="1358.60" y="1149.30" font-size="10.00" text-anchor="start" dominant-baseline="central">GENERATED FROM roomData.js</text>
+<text x="1246.10" y="489.60" font-size="8.75" text-anchor="start" dominant-baseline="central">G1</text>
+<text x="1295.60" y="489.60" font-size="8.75" text-anchor="start" dominant-baseline="central">MS GRILL RAILING 3'-6&quot;, OPEN ABOVE</text>
+<text x="1534.10" y="489.60" font-size="8.75" text-anchor="start" dominant-baseline="central">6'-7&quot; X 10'-0&quot;</text>
+<text x="1633.09" y="489.60" font-size="8.75" text-anchor="start" dominant-baseline="central">1</text>
+<text x="1246.10" y="505.80" font-size="8.75" text-anchor="start" dominant-baseline="central">G2</text>
+<text x="1295.60" y="505.80" font-size="8.75" text-anchor="start" dominant-baseline="central">MS GRILL RAILING 3'-6&quot;, OPEN ABOVE</text>
+<text x="1534.10" y="505.80" font-size="8.75" text-anchor="start" dominant-baseline="central">4'-11&quot; X 10'-0&quot;</text>
+<text x="1633.09" y="505.80" font-size="8.75" text-anchor="start" dominant-baseline="central">1</text>
+<text x="1246.10" y="549.00" font-size="15.00" text-anchor="start" dominant-baseline="central">AREA STATEMENT (CLEAR FLOOR AREA)</text>
+<line x1="1246.10" y1="559.80" x2="1660.10" y2="559.80" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
+<text x="1246.10" y="580.50" font-size="8.75" text-anchor="start" dominant-baseline="central">LIVING &amp; DINING</text>
+<text x="1660.10" y="580.50" font-size="8.75" text-anchor="end" dominant-baseline="central">191.2 SQ.FT</text>
+<text x="1246.10" y="595.80" font-size="8.75" text-anchor="start" dominant-baseline="central">PASSAGE</text>
+<text x="1660.10" y="595.80" font-size="8.75" text-anchor="end" dominant-baseline="central">32.2 SQ.FT</text>
+<text x="1246.10" y="611.10" font-size="8.75" text-anchor="start" dominant-baseline="central">PARENTS ROOM</text>
+<text x="1660.10" y="611.10" font-size="8.75" text-anchor="end" dominant-baseline="central">104.4 SQ.FT</text>
+<text x="1246.10" y="626.40" font-size="8.75" text-anchor="start" dominant-baseline="central">TOILET (YASH)</text>
+<text x="1660.10" y="626.40" font-size="8.75" text-anchor="end" dominant-baseline="central">35.3 SQ.FT</text>
+<text x="1246.10" y="641.70" font-size="8.75" text-anchor="start" dominant-baseline="central">YASH ROOM</text>
+<text x="1660.10" y="641.70" font-size="8.75" text-anchor="end" dominant-baseline="central">110.8 SQ.FT</text>
+<text x="1246.10" y="657.00" font-size="8.75" text-anchor="start" dominant-baseline="central">ENTRANCE LOBBY</text>
+<text x="1660.10" y="657.00" font-size="8.75" text-anchor="end" dominant-baseline="central">20.3 SQ.FT</text>
+<text x="1246.10" y="672.30" font-size="8.75" text-anchor="start" dominant-baseline="central">KITCHEN</text>
+<text x="1660.10" y="672.30" font-size="8.75" text-anchor="end" dominant-baseline="central">90.7 SQ.FT</text>
+<text x="1246.10" y="687.60" font-size="8.75" text-anchor="start" dominant-baseline="central">DRY BALCONY</text>
+<text x="1660.10" y="687.60" font-size="8.75" text-anchor="end" dominant-baseline="central">29.4 SQ.FT</text>
+<text x="1246.10" y="702.90" font-size="8.75" text-anchor="start" dominant-baseline="central">SERVICE PLATFORM</text>
+<text x="1660.10" y="702.90" font-size="8.75" text-anchor="end" dominant-baseline="central">22.5 SQ.FT</text>
+<text x="1246.10" y="718.20" font-size="8.75" text-anchor="start" dominant-baseline="central">COMMON TOILET</text>
+<text x="1660.10" y="718.20" font-size="8.75" text-anchor="end" dominant-baseline="central">36.0 SQ.FT</text>
+<text x="1246.10" y="733.50" font-size="8.75" text-anchor="start" dominant-baseline="central">TOILET (BHAGYESH)</text>
+<text x="1660.10" y="733.50" font-size="8.75" text-anchor="end" dominant-baseline="central">36.7 SQ.FT</text>
+<text x="1246.10" y="748.80" font-size="8.75" text-anchor="start" dominant-baseline="central">BHAGYESH ROOM</text>
+<text x="1660.10" y="748.80" font-size="8.75" text-anchor="end" dominant-baseline="central">125.5 SQ.FT</text>
+<text x="1246.10" y="764.10" font-size="8.75" text-anchor="start" dominant-baseline="central">BALCONY (LIVING)</text>
+<text x="1660.10" y="764.10" font-size="8.75" text-anchor="end" dominant-baseline="central">42.8 SQ.FT</text>
+<text x="1246.10" y="779.40" font-size="8.75" text-anchor="start" dominant-baseline="central">BALCONY (BHAGYESH)</text>
+<text x="1660.10" y="779.40" font-size="8.75" text-anchor="end" dominant-baseline="central">29.5 SQ.FT</text>
+<line x1="1552.10" y1="787.50" x2="1660.10" y2="787.50" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
+<text x="1246.10" y="796.50" font-size="9.38" text-anchor="start" dominant-baseline="central">TOTAL OF ZONES ABOVE</text>
+<text x="1660.10" y="796.50" font-size="9.38" text-anchor="end" dominant-baseline="central">907.4 SQ.FT</text>
+<text x="1246.10" y="839.70" font-size="15.00" text-anchor="start" dominant-baseline="central">NOTES</text>
+<line x1="1246.10" y1="850.50" x2="1660.10" y2="850.50" stroke="#000" stroke-width="0.60" stroke-linecap="square"/>
+<text x="1246.10" y="871.20" font-size="8.75" text-anchor="start" dominant-baseline="central">1. ALL DIMENSIONS IN FEET-INCHES. DO NOT SCALE DRAWING.</text>
+<text x="1246.10" y="886.50" font-size="8.75" text-anchor="start" dominant-baseline="central">2. ROOM SIZES ARE CLEAR INTERNAL DIMENSIONS.</text>
+<text x="1246.10" y="901.80" font-size="8.75" text-anchor="start" dominant-baseline="central">3. WALLS 0'-5&quot; THK. UNLESS DIMENSIONED OTHERWISE.</text>
+<text x="1246.10" y="917.10" font-size="8.75" text-anchor="start" dominant-baseline="central">4. FLOOR TO CEILING 10'-0&quot;. DOOR / OPENING HEAD 7'-0&quot;.</text>
+<text x="1246.10" y="932.40" font-size="8.75" text-anchor="start" dominant-baseline="central">5. ROOM SIZES FROM DEVELOPER PLAN 'OPTION 1'. ROOM POSITIONS</text>
+<text x="1246.10" y="947.70" font-size="8.75" text-anchor="start" dominant-baseline="central">   TRACED FROM THAT PLAN - VERIFY ON SITE BEFORE FABRICATION.</text>
+<text x="1246.10" y="963.00" font-size="8.75" text-anchor="start" dominant-baseline="central">6. DOOR AND GLAZING SIZES / POSITIONS NOMINAL, NOT MEASURED.</text>
+<text x="1246.10" y="978.30" font-size="8.75" text-anchor="start" dominant-baseline="central">7. NORTH AS PER DEVELOPER PLAN - TO BE CONFIRMED ON SITE.</text>
+<text x="1253.30" y="1041.30" font-size="8.13" text-anchor="start" dominant-baseline="central">PROJECT</text>
+<text x="1358.60" y="1041.30" font-size="10.00" text-anchor="start" dominant-baseline="central">RESIDENTIAL FLAT - PUNE</text>
+<text x="1253.30" y="1064.70" font-size="8.13" text-anchor="start" dominant-baseline="central">DRAWING</text>
+<text x="1358.60" y="1064.70" font-size="10.00" text-anchor="start" dominant-baseline="central">FLOOR PLAN - OPTION 1</text>
+<text x="1253.30" y="1088.10" font-size="8.13" text-anchor="start" dominant-baseline="central">CARPET AREA</text>
+<text x="1358.60" y="1088.10" font-size="10.00" text-anchor="start" dominant-baseline="central">940 SQ.FT (AS PER DEVELOPER PLAN)</text>
+<text x="1253.30" y="1111.50" font-size="8.13" text-anchor="start" dominant-baseline="central">SCALE</text>
+<text x="1358.60" y="1111.50" font-size="10.00" text-anchor="start" dominant-baseline="central">GRAPHIC - SEE SCALE BAR</text>
+<text x="1253.30" y="1134.90" font-size="8.13" text-anchor="start" dominant-baseline="central">UNITS</text>
+<text x="1358.60" y="1134.90" font-size="10.00" text-anchor="start" dominant-baseline="central">FEET-INCHES (DXF: INCHES)</text>
+<text x="1253.30" y="1158.30" font-size="8.13" text-anchor="start" dominant-baseline="central">DATE</text>
+<text x="1358.60" y="1158.30" font-size="10.00" text-anchor="start" dominant-baseline="central">2026-10-10</text>
+<text x="1253.30" y="1181.70" font-size="8.13" text-anchor="start" dominant-baseline="central">SOURCE</text>
+<text x="1358.60" y="1181.70" font-size="10.00" text-anchor="start" dominant-baseline="central">GENERATED FROM roomData.js</text>
 </g>
 <g id="A-ANNO-TTLB">
-<polygon points="1246.10,997.20 1660.10,997.20 1660.10,1161.00 1246.10,1161.00" fill="none" stroke="#000" stroke-width="1.12"/>
-<line x1="1349.60" y1="997.20" x2="1349.60" y2="1161.00" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
-<line x1="1246.10" y1="1020.60" x2="1660.10" y2="1020.60" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
-<line x1="1246.10" y1="1044.00" x2="1660.10" y2="1044.00" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
-<line x1="1246.10" y1="1067.40" x2="1660.10" y2="1067.40" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
-<line x1="1246.10" y1="1090.80" x2="1660.10" y2="1090.80" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
-<line x1="1246.10" y1="1114.20" x2="1660.10" y2="1114.20" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
-<line x1="1246.10" y1="1137.60" x2="1660.10" y2="1137.60" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
+<polygon points="1246.10,1029.60 1660.10,1029.60 1660.10,1193.40 1246.10,1193.40" fill="none" stroke="#000" stroke-width="1.12"/>
+<line x1="1349.60" y1="1029.60" x2="1349.60" y2="1193.40" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
+<line x1="1246.10" y1="1053.00" x2="1660.10" y2="1053.00" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
+<line x1="1246.10" y1="1076.40" x2="1660.10" y2="1076.40" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
+<line x1="1246.10" y1="1099.80" x2="1660.10" y2="1099.80" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
+<line x1="1246.10" y1="1123.20" x2="1660.10" y2="1123.20" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
+<line x1="1246.10" y1="1146.60" x2="1660.10" y2="1146.60" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
+<line x1="1246.10" y1="1170.00" x2="1660.10" y2="1170.00" stroke="#000" stroke-width="1.12" stroke-linecap="square"/>
 <polygon points="18.00,18.00 1708.88,18.00 1708.88,1434.59 18.00,1434.59" fill="none" stroke="#000" stroke-width="1.12"/>
 </g>
 </svg>

@@ -75,16 +75,17 @@ for (const [a, b] of wallOutline) line("A-WALL", a, b);
 // ---------------------------------------------------------------------------
 
 // Marks: D1.. doors, W1.. windows, SD1.. sliding glass, OP1.. bare openings (widest first)
-const PREFIX = { door: "D", window: "W", glass: "SD", opening: "OP", railing: "R" };
+const PREFIX = { door: "D", window: "W", glass: "SD", opening: "OP", railing: "R", grill: "G" };
 const DESC = {
   door: "FLUSH DOOR, HINGED",
   window: "WINDOW, FLOOR TO CEILING",
-  glass: "SLIDING GLASS DOOR, FLOOR TO CEILING",
+  glass: "SLIDING GLASS DOOR",
   opening: "OPENING, NO SHUTTER",
   railing: "HALF WALL 3'-0\" + METAL RAILING",
+  grill: "MS GRILL RAILING 3'-6\", OPEN ABOVE",
 };
 const schedule = [];
-for (const type of ["door", "window", "glass", "opening", "railing"]) {
+for (const type of ["door", "window", "glass", "opening", "railing", "grill"]) {
   const list = openings.filter((o) => o.type === type);
   const widths = [...new Set(list.map((o) => Math.round(o.width * M_TO_FT * 12)))].sort((a, b) => b - a);
   widths.forEach((inches, i) => {
@@ -147,8 +148,8 @@ for (const o of openings) {
     }
   }
 
-  if (o.type === "railing") {
-    // Half wall below the cut plane: its two faces, plus the rail on the centreline
+  if (o.type === "railing" || o.type === "grill") {
+    // Half wall / kerb below the cut plane: its two faces, plus the rail on the centreline
     line("A-WALL", at(s, a0), at(e, a0));
     line("A-WALL", at(s, a1), at(e, a1));
     line("A-GLAZ", at(s, (a0 + a1) / 2), at(e, (a0 + a1) / 2));

@@ -49,7 +49,8 @@ Shell with openings, from the owner's colour-coded markup of
 `floor-plan.svg` (2026-09-28):
 
 - **window** — floor-to-ceiling window: Parents Room and Yash Room west walls
-- **glass** — floor-to-ceiling sliding glass door (red on the markup)
+- **glass** — sliding glass door (red on the markup); floor-to-ceiling unless
+  it carries a `height`
 - **door** — ordinary wooden door, wall continues above 7' (green)
 - **opening** — bare opening, no door, lintel at 7' (blue; also lobby -> kitchen)
 
@@ -199,6 +200,63 @@ Balanced is selected, in the dollhouse and Yash Room: bed head south, desk
 facing north, heavy wardrobe on the south wall. Text lives in the layout's
 `vastu` entry in `yashRoom.js`. Collision doesn't know
 the furniture yet.
+
+**Balconies + Parents Room glazing** (2026-10-10, owner's site photo): both
+balconies are open on their west edge — a `grill` opening: 4" kerb, vertical
+bars at ~4 1/2", flat handrail at 3'-6", open above; never walkable. Their
+doors to the Living room / Bhagyesh Room are two-panel clear sliding doors in
+a dark frame with wall above 7' (`height: DOOR_HEIGHT`, `clear: true`,
+`slide: "living_balcony_door"` / `"bhagyesh_balcony_door"`). The Open / Close
+door button now serves whichever sliding door is beside the room you're in
+(`DOORS` in `main.js`). Parents Room's west wall has the same framed glazing
+as Yash Room's. Sizes are from the photo by eye, not measured; the west edge
+as the open side is read from the photo and the plan.
+
+**Orientation + height references** (2026-10-10): a compass bottom-left turns
+with the view in both modes and reads the bearing you face ("Facing NE 51°");
+inside a room it also gives eye and ceiling height. Dollhouse only
+(`reference.js`): N / E / S / W markers just outside the flat at wall-top
+height, a ground arrow at north, and a level staff at the north-east corner —
+a collar every foot, labels at floor, eye, lintel and ceiling. All follow the
+Sun panel's "Plan up", so they are only as right as `PLAN_UP_BEARING`. Not
+clickable, not in the export.
+
+**Yash Room desk wall** (2026-10-10, owner's reference photos — black wall,
+walnut slats, warm LED glow): the north wall behind the desk, glass to toilet
+door, in layouts with `deskWall: true` (Balanced only). Three looks to choose
+from, `DESK_WALLS` in `yashRoom.js`, switched from "Desk wall" in the layout
+panel (remembered per browser); **owner has not picked yet**:
+A Charcoal & amber (closest to the photos: black board, two slat panels,
+staggered shelves, amber strips incl. the corner; other walls warm oat),
+B Walnut slat wall (slats wall to wall and floor to ceiling, one long black
+shelf, warm-white ceiling cove; other walls warm oat), C Teal study (the
+earlier deep teal `0x22596d` on every wall, one slat panel behind the
+monitors, two walnut shelves, softer warm-white strips). Like a kitchen theme,
+picking a look also sets the room's wall paint through the wall colour picks.
+`roomData.js` default paint is A's warm oat (`0xd8d1c6`; was teal). All looks
+share the walnut desk on black legs with a desk mat, a globe lamp and a dark
+rug (the monitor riser and speakers from the first pass are gone). Strips are `RectAreaLight`s + a `PointLight` in the
+lamp — the one exception to "no point lights"; they sit in each look's group,
+so only the visible look lights the room. "Evening mood" (layout panel, on by
+default) dims the neutral light to 30% while you stand in Yash Room so the
+LEDs carry the room; the dollhouse and other rooms stay neutral. Sizes and
+LED intensities are by eye, tuned against screenshots.
+
+**Desk kit as real models** (2026-10-10, owner: the blocks looked like
+Roblox): `models/*.glb`, loaded in `yashRoom.js` (`MODELS`, `place()`), each
+scaled to its true size and dropped where its planning block stands. The
+block shows until the model arrives and stays if the file fails, and the
+`flat.json` export still carries the blocks, not the models. Monitor (27"),
+Fractal Meshify C tower, MacBook Pro 16", Logitech keyboard + mouse, mesh
+office chair — all CC BY from Sketchfab via the Objaverse archive, credits in
+`models/CREDITS.md`, 2.7 MB in total after `gltf-transform optimize`. In every
+layout the monitors, keyboard, mouse and chair are models; wardrobe, bed and
+desk stay blocks. Balanced carries the owner's actual kit: ONE monitor on a
+monitor arm (arm built in code; the model's stand is cut off by coordinates,
+which is why `monitor.glb` is not optimised), the tower on the desk's east
+end, and the MacBook — used on its own — open on the L-return, facing the
+glass. Monitor size (27") and the PC / MacBook models are stand-ins: the
+owner hasn't said what he has. Model meshes are skipped by hotspot picking.
 
 `/#<room_id>` (e.g. `/#yash_room`) opens straight into that room.
 

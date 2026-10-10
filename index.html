@@ -32,6 +32,17 @@
 
   <div id="hotspot-tip" class="hidden"></div>
 
+  <div id="compass" title="Which way you're looking. N follows the Sun panel's Plan up bearing.">
+    <div id="compass-rose">
+      <span class="pt n">N</span><span class="pt e">E</span><span class="pt s">S</span><span class="pt w">W</span>
+      <i class="needle"></i>
+    </div>
+    <div id="compass-text">
+      <div id="compass-facing"></div>
+      <div id="compass-level" class="hidden"></div>
+    </div>
+  </div>
+
   <div id="controls-help">
     <button id="help-toggle" aria-expanded="false" aria-controls="help-body">Controls <kbd>H</kbd></button>
     <div id="help-body"></div>
@@ -62,6 +73,12 @@
       <div class="panel-title">Yash Room layout</div>
       <div id="layout-options" role="radiogroup" aria-label="Yash Room layout"></div>
       <div id="layout-note"></div>
+      <div id="desk-wall">
+        <div class="panel-title">Desk wall</div>
+        <div id="desk-wall-options" role="radiogroup" aria-label="Desk wall look"></div>
+        <div id="desk-wall-note"></div>
+      </div>
+      <label id="mood-row" title="Inside Yash Room: dim the room so the desk wall's LED strips light it"><input type="checkbox" id="mood-on" /> Evening mood</label>
     </div>
 
     <div id="theme-panel" class="panel">

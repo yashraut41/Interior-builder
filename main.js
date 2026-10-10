@@ -6,7 +6,8 @@ import { buildAllRooms, getFlatBounds } from "./rooms.js";
 import { zones, wallRects, openingRects, wallBounds } from "./walls.js";
 import { sunPosition, sunDirection } from "./sun.js";
 import { THEMES, DEFAULT_THEME, applyKitchenTheme } from "./kitchen.js";
-import { LAYOUTS, DEFAULT_LAYOUT } from "./yashRoom.js";
+import { LAYOUTS, DEFAULT_LAYOUT, DESK_WALLS, DEFAULT_DESK_WALL, showDeskWall } from "./yashRoom.js";
+import { buildReference, feetInches } from "./reference.js";
 
 // ---------------------------------------------------------------------------
 // Scene setup
@@ -113,6 +114,16 @@ try {
   Object.assign(sunState, JSON.parse(localStorage.getItem(SUN_STORE)));
 } catch {}
 
+// Evening mood: inside Yash Room the neutral light dims right down, so the
+// desk wall's LED strips (yashRoom.js) are what light the room.
+const MOOD_STORE = "yashMood";
+const MOOD_DIM = 0.3;
+let moodOn = true;
+try {
+  moodOn = localStorage.getItem(MOOD_STORE) !== "0";
+} catch {}
+let moodActive = false; // on, and standing in Yash Room
+
 function saveSunState() {
   try {
     localStorage.setItem(SUN_STORE, JSON.stringify(sunState));
@@ -130,10 +141,11 @@ function applyLighting() {
   const on = sunState.on;
   sun.visible = sky.visible = roofSlab.visible = on;
   if (!on) {
-    ambient.color.set(0xffffff);
-    ambient.intensity = Math.PI * AMBIENT_SHARE;
-    scene.environmentIntensity = 0.3;
-    scene.background.copy(NEUTRAL_BACKGROUND);
+    const dim = moodActive ? MOOD_DIM : 1;
+    ambient.color.set(moodActive ? 0xffe6cc : 0xffffff);
+    ambient.intensity = Math.PI * AMBIENT_SHARE * dim;
+    scene.environmentIntensity = 0.3 * dim;
+    scene.background.copy(NEUTRAL_BACKGROUND).multiplyScalar(dim);
     return;
   }
 
@@ -205,6 +217,7 @@ sunTimeEl.addEventListener("change", saveSunState);
 sunNorthEl.addEventListener("input", () => {
   if (sunNorthEl.value === "") return;
   sunState.planUp = Number(sunNorthEl.value);
+  reference.setBearing(sunState.planUp);
   saveSunState();
   showSun();
 });
@@ -282,9 +295,16 @@ paintResetBtn.addEventListener("click", () => {
 
 const doorPanelEl = document.getElementById("door-panel");
 const doorBtn = document.getElementById("door-btn");
-const DOOR_ROOMS = new Set(["kitchen", "dry_balcony"]);
+const KITCHEN_ROOMS = new Set(["kitchen", "dry_balcony"]);
 const DOOR_TIME = 0.9; // seconds to slide fully
-const door = { slider: sliders.utility_door, t: 0, open: false };
+const DOORS = [
+  { id: "utility_door", label: "utility door", rooms: ["kitchen", "dry_balcony"] },
+  { id: "living_balcony_door", label: "balcony door", rooms: ["living_dining", "balcony_living"] },
+  { id: "bhagyesh_balcony_door", label: "balcony door", rooms: ["bhagyesh_room", "balcony_bhagyesh"] },
+]
+  .filter((d) => sliders[d.id])
+  .map((d) => ({ ...d, slider: sliders[d.id], t: 0, open: false }));
+let door = null; // the one beside the room you're in
 
 /**
  * Room-specific panels: door button inside the kitchen / utility; theme
@@ -292,23 +312,34 @@ const door = { slider: sliders.utility_door, t: 0, open: false };
  * dollhouse. `room` is null in the dollhouse.
  */
 function showRoomPanels(room) {
-  const inKitchen = room && DOOR_ROOMS.has(room.id);
-  doorPanelEl.classList.toggle("hidden", !(door.slider && inKitchen));
+  const inKitchen = room && KITCHEN_ROOMS.has(room.id);
+  door = (room && DOORS.find((d) => d.rooms.includes(room.id))) || null;
+  doorPanelEl.classList.toggle("hidden", !door);
+  showDoorButton();
   themePanelEl.classList.toggle("hidden", !!room && !inKitchen);
   layoutPanelEl.classList.toggle("hidden", !!room && room.id !== "yash_room");
   showVastu();
+  moodActive = moodOn && room?.id === "yash_room";
+  applyLighting();
+}
+
+function showDoorButton() {
+  if (door) doorBtn.textContent = `${door.open ? "Close" : "Open"} ${door.label}`;
 }
 
 doorBtn.addEventListener("click", () => {
+  if (!door) return;
   door.open = !door.open;
-  doorBtn.textContent = door.open ? "Close utility door" : "Open utility door";
+  showDoorButton();
 });
 
 function updateDoor(dt) {
-  const target = door.open ? 1 : 0;
-  if (!door.slider || door.t === target) return;
-  door.t = THREE.MathUtils.clamp(door.t + (Math.sign(target - door.t) * dt) / DOOR_TIME, 0, 1);
-  door.slider.set(door.t * door.t * (3 - 2 * door.t)); // ease in and out
+  for (const d of DOORS) {
+    const target = d.open ? 1 : 0;
+    if (d.t === target) continue;
+    d.t = THREE.MathUtils.clamp(d.t + (Math.sign(target - d.t) * dt) / DOOR_TIME, 0, 1);
+    d.slider.set(d.t * d.t * (3 - 2 * d.t)); // ease in and out
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -399,6 +430,7 @@ function setYashLayout(id) {
   for (const [lid, g] of Object.entries(yashLayouts)) g.visible = lid === layout.id;
   LAYOUTS.forEach((l, i) => layoutButtons[i].setAttribute("aria-checked", String(l.id === layout.id)));
   layoutNoteEl.textContent = layout.note;
+  deskWallEl.classList.toggle("hidden", !layout.deskWall);
   vastuListEl.replaceChildren(
     ...(layout.vastu ?? []).map(([what, why]) => {
       const li = document.createElement("li");
@@ -417,7 +449,59 @@ function showVastu() {
   vastuCardEl.classList.toggle("hidden", layoutPanelEl.classList.contains("hidden") || !layout?.vastu);
 }
 
+// Desk wall — the look of the wall behind the monitors (yashRoom.js
+// DESK_WALLS), for layouts that have one. Like a kitchen theme, a look also
+// sets the room's wall paint, through the wall colour picks.
+const DESK_WALL_STORE = "yashDeskWall";
+const deskWallEl = document.getElementById("desk-wall");
+const deskWallOptionsEl = document.getElementById("desk-wall-options");
+const deskWallNoteEl = document.getElementById("desk-wall-note");
+
+let deskWallLook = DEFAULT_DESK_WALL;
+try {
+  deskWallLook = localStorage.getItem(DESK_WALL_STORE) ?? DEFAULT_DESK_WALL;
+} catch {}
+
+const deskWallButtons = DESK_WALLS.map((look) => {
+  const b = document.createElement("button");
+  b.className = "layout-option";
+  b.setAttribute("role", "radio");
+  b.textContent = look.name;
+  b.addEventListener("click", () => setDeskWall(look.id));
+  deskWallOptionsEl.append(b);
+  return b;
+});
+
+/** `walls: false` on load, so a saved wall colour pick isn't overwritten. */
+function setDeskWall(id, { walls = true } = {}) {
+  const look = DESK_WALLS.find((l) => l.id === id) ?? DESK_WALLS.find((l) => l.id === DEFAULT_DESK_WALL);
+  deskWallLook = look.id;
+  showDeskWall(yashLayouts, look.id);
+  if (walls) {
+    paints.yash_room.color.set(look.wall);
+    paintPicks.yash_room = hex(look.wall);
+    savePaintPicks();
+    showPaint();
+  }
+  DESK_WALLS.forEach((l, i) => deskWallButtons[i].setAttribute("aria-checked", String(l.id === look.id)));
+  deskWallNoteEl.textContent = look.note;
+  try {
+    localStorage.setItem(DESK_WALL_STORE, look.id);
+  } catch {}
+}
+setDeskWall(deskWallLook, { walls: false });
+
 setYashLayout(yashLayout);
+
+const moodOnEl = document.getElementById("mood-on");
+moodOnEl.checked = moodOn;
+moodOnEl.addEventListener("change", () => {
+  moodOn = moodOnEl.checked;
+  try {
+    localStorage.setItem(MOOD_STORE, moodOn ? "1" : "0");
+  } catch {}
+  showRoomPanels(currentRoom);
+});
 
 // ---------------------------------------------------------------------------
 // Dollhouse (overview) controls
@@ -447,6 +531,36 @@ function setDollhouseCameraStart() {
   orbitControls.update();
 }
 setDollhouseCameraStart();
+
+// ---------------------------------------------------------------------------
+// Orientation + height references. Dollhouse: N / E / S / W markers around
+// the flat and a level staff (reference.js). Everywhere: a compass bottom-left
+// that turns with the view, with the bearing you're facing; inside a room it
+// also gives eye and ceiling height. All follow the Sun panel's "Plan up".
+// ---------------------------------------------------------------------------
+
+const reference = buildReference(scene);
+reference.setBearing(sunState.planUp);
+
+const compassRoseEl = document.getElementById("compass-rose");
+const compassFacingEl = document.getElementById("compass-facing");
+const compassLevelEl = document.getElementById("compass-level");
+compassLevelEl.textContent = `Eye ${feetInches(EYE_HEIGHT)} · ceiling ${feetInches(WALL_HEIGHT)}`;
+
+const viewDir = new THREE.Vector3();
+let shownHeading = null;
+
+function updateCompass() {
+  camera.getWorldDirection(viewDir);
+  // Looking straight down there is no forward — the top of the screen stands in
+  if (Math.hypot(viewDir.x, viewDir.z) < 1e-3) viewDir.set(0, 1, 0).applyQuaternion(camera.quaternion);
+  const planHeading = THREE.MathUtils.radToDeg(Math.atan2(viewDir.x, -viewDir.z)); // clockwise from plan-up
+  const heading = Math.round(THREE.MathUtils.euclideanModulo(planHeading + sunState.planUp, 360)) % 360;
+  if (heading === shownHeading) return;
+  shownHeading = heading;
+  compassRoseEl.style.setProperty("--turn", `${-heading}deg`);
+  compassFacingEl.textContent = `Facing ${COMPASS[Math.round(heading / 45) % 8]} ${heading}°`;
+}
 
 // ---------------------------------------------------------------------------
 // Hotspots — one per zone at the zone's centre. In the dollhouse they lie on
@@ -542,6 +656,8 @@ function enterPanoMode(room, yaw) {
   mode = "pano";
   orbitControls.enabled = false;
   ceilingGroup.visible = true; // ceiling only exists once you're inside
+  reference.group.visible = false;
+  compassLevelEl.classList.remove("hidden");
   backBtn.classList.remove("hidden");
   roomLabelEl.classList.remove("hidden");
   setCurrentRoom(room);
@@ -558,6 +674,8 @@ function exitPanoMode() {
   showRoomPanels(null);
   hideHotspotTip();
   ceilingGroup.visible = false;
+  reference.group.visible = true;
+  compassLevelEl.classList.add("hidden");
   backBtn.classList.add("hidden");
   roomLabelEl.classList.add("hidden");
   animateCameraTo(dollhouseCamPos, dollhouseTarget, () => {
@@ -589,6 +707,7 @@ exportBtn.addEventListener("click", () => {
   for (const [id, m] of Object.entries(exported.paints)) m.color.copy(paints[id].color);
   applyKitchenTheme(exported.kitchenMaterials, kitchenTheme);
   for (const [id, g] of Object.entries(exported.yashLayouts)) g.visible = id === yashLayout;
+  showDeskWall(exported.yashLayouts, deskWallLook);
 
   const json = JSON.stringify(flat.toJSON());
   const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
@@ -821,7 +940,10 @@ const passableOpenings = openingRects.filter(
 const blockers = [...wallRects, ...openingRects.filter((r) => !passableOpenings.includes(r))];
 
 /** A sliding door's opening only lets you through once the door is open. */
-const shut = (r) => r.opening.slide && !(door.open && door.t > 0.9);
+const shut = (r) => {
+  const d = DOORS.find((q) => q.id === r.opening.slide);
+  return d && !(d.open && d.t > 0.9);
+};
 
 function canStand(x, z) {
   const onFloor =
@@ -1022,6 +1144,7 @@ function animate(now) {
     updatePanoLook();
   }
   faceHotspotsToCamera();
+  updateCompass();
 
   renderer.render(scene, camera);
 }

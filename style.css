@@ -124,6 +124,7 @@ html, body {
   font-size: 13px;
 }
 
+#mood-row,
 #sun-panel label.panel-title {
   display: flex;
   align-items: center;
@@ -219,6 +220,8 @@ html, body {
 }
 
 /* Yash Room layout switcher */
+#desk-wall,
+#desk-wall-options,
 #layout-options {
   display: flex;
   flex-direction: column;
@@ -234,6 +237,11 @@ html, body {
   border-color: #fff;
 }
 
+#desk-wall {
+  gap: 8px;
+}
+
+#desk-wall-note,
 #layout-note {
   font-size: 12px;
   line-height: 1.35;
@@ -275,6 +283,67 @@ html, body {
   padding: 4px 8px;
   font-size: 12px;
   white-space: nowrap;
+}
+
+/* --- Compass: bottom-left, the rose turns so N points at true north ------- */
+
+#compass {
+  position: fixed;
+  left: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(20, 20, 20, 0.75);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  padding: 8px 12px 8px 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+#compass-rose {
+  --turn: 0deg;
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  transform: rotate(var(--turn));
+}
+
+/* Letters ride the rim but stay upright */
+#compass-rose .pt {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px;
+  font: 600 11px/14px system-ui, sans-serif;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  transform: rotate(calc(var(--turn) * -1));
+}
+
+#compass-rose .n { left: 50%; top: 9px; color: #ff5533; }
+#compass-rose .s { left: 50%; top: calc(100% - 9px); }
+#compass-rose .e { left: calc(100% - 9px); top: 50%; }
+#compass-rose .w { left: 9px; top: 50%; }
+
+#compass-rose .needle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -13px 0 0 -4px;
+  border: 4px solid transparent;
+  border-top-width: 0;
+  border-bottom: 13px solid #ff5533;
+}
+
+#compass-level {
+  color: rgba(255, 255, 255, 0.65);
 }
 
 /* --- Controls help: bottom-right panel + first-visit splash ------------- */

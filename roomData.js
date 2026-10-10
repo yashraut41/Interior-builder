@@ -41,6 +41,8 @@ export const DOOR_HEIGHT = ft(7);
  *   opening - bare opening, no door at all
  *   railing - half wall up to `sill`, metal rail on top, open above
  *             (the utility's end, onto the building's inner shaft)
+ *   grill   - balcony edge: low kerb (`sill`), vertical bars up to a flat
+ *             handrail at `rail`, open above (owner's site photo, 2026-10-10)
  */
 export const OPENING_TYPES = {
   window: { height: WALL_HEIGHT },
@@ -48,6 +50,7 @@ export const OPENING_TYPES = {
   door: { height: DOOR_HEIGHT },
   opening: { height: DOOR_HEIGHT },
   railing: { height: WALL_HEIGHT, sill: ft(3, 0) },
+  grill: { height: WALL_HEIGHT, sill: ft(0, 4), rail: ft(3, 6) },
 };
 
 /** Eye height used for the locked pano viewpoint. */
@@ -89,8 +92,12 @@ export const NORTH_DIRECTION = {
  *   hinge  - doors only: 'start' | 'end' — which jamb the leaf hangs on
  *            ('start' = the jamb nearer the offset origin)
  *   swing  - doors only: 'in' opens into this zone, 'out' into its neighbour
+ *   height - optional: head height, overriding the type's (a sliding door
+ *            with wall above it rather than glass to the ceiling)
  *   slide  - sliding glass only, optional: an id ('utility_door') that gets a
- *            frosted sliding door mesh and an Open / Close button
+ *            dark-framed sliding door mesh and an Open / Close button.
+ *            Frosted unless `clear: true`; full-height ones get a fixed
+ *            transom light above door height
  *   frame  - windows only, optional: { transom } builds an aluminium frame —
  *            2 fixed panes below the transom height, 2 sliding sashes above
  *            (the one exception to "openings have no mesh")
@@ -145,7 +152,8 @@ export const rooms = [
     x: ft(5, 6),
     z: ft(12, 1),
     openings: [
-      { side: "west", offset: ft(0, 0), width: ft(9, 5), type: "window" }, // full wall
+      // Full-wall aluminium glazing, same as Yash Room's (owner, 2026-10-10)
+      { side: "west", offset: ft(0, 0), width: ft(9, 5), type: "window", frame: { transom: ft(3, 0) } },
       { side: "east", offset: ft(6, 1), width: ft(3, 0), type: "door", hinge: "end", swing: "in" }, // from living
     ],
   },
@@ -175,9 +183,11 @@ export const rooms = [
       { side: "west", offset: ft(0, 0), width: ft(10, 0), type: "window", frame: { transom: ft(3, 0) } },
       { side: "east", offset: ft(0, 4), width: ft(3, 0), type: "door", hinge: "start", swing: "in" }, // from passage
     ],
-    // From the owner's reference renders (screenshots, 2026-09-29).
+    // Owner's reference photos (2026-10-10): black desk wall (built with the
+    // layout, yashRoom.js), the other walls light and warm so the room stays
+    // open. Was deep teal 0x22596d (reference renders, 2026-09-29).
     finish: {
-      wall: 0x22596d, // deep teal
+      wall: 0xd8d1c6, // warm stone
       ceiling: 0xf4f4f2,
       skirting: 0xf4f4f2,
       floor: "carpet",
@@ -289,7 +299,9 @@ export const rooms = [
     x: ft(7, 10),
     z: ft(3, 4),
     openings: [
-      { side: "east", offset: ft(0, 0), width: ft(6, 7), type: "glass" }, // to living
+      // To living: two-panel clear sliding door, wall above 7' (site photo, 2026-10-10)
+      { side: "east", offset: ft(0, 0), width: ft(6, 7), type: "glass", height: DOOR_HEIGHT, slide: "living_balcony_door", clear: true },
+      { side: "west", offset: ft(0, 0), width: ft(6, 7), type: "grill" }, // the open edge
     ],
   },
   {
@@ -301,7 +313,9 @@ export const rooms = [
     x: ft(8, 1),
     z: ft(35, 0),
     openings: [
-      { side: "east", offset: ft(0, 0), width: ft(4, 11), type: "glass" }, // to Bhagyesh Room
+      // To Bhagyesh Room. Same door and grill as the living balcony (owner, 2026-10-10)
+      { side: "east", offset: ft(0, 0), width: ft(4, 11), type: "glass", height: DOOR_HEIGHT, slide: "bhagyesh_balcony_door", clear: true },
+      { side: "west", offset: ft(0, 0), width: ft(4, 11), type: "grill" },
     ],
   },
 ];

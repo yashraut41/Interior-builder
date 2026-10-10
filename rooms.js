@@ -145,6 +145,7 @@ function buildWalls() {
     if (o.orphan) continue;
     if (o.frame) group.add(buildGlazing(o, frameMat, glassMat));
     if (o.type === "railing") group.add(buildRailing(o, metalMat));
+    if (o.type === "grill") group.add(buildGrill(o, metalMat));
     if (o.slide) {
       const door = buildSlidingDoor(o);
       group.add(door.group);
@@ -186,8 +187,40 @@ function buildRailing(o, metalMat) {
   return group;
 }
 
-// Sliding door: two frosted panels on two tracks below a fixed frosted
-// transom at door height. The panel at the `e` end slides over the other.
+// Balcony grill: vertical bars from the kerb up to a flat handrail
+const GRILL_BAR = 0.012; // 12mm square bar
+const GRILL_PITCH = 0.11; // ~4 1/2" centres
+const GRILL_RAIL = { width: 0.06, height: 0.025 };
+
+function buildGrill(o, metalMat) {
+  const group = new THREE.Group();
+  group.name = `grill_${o.room.id}_${o.side}`;
+  const [s, e] = o.along;
+  const mid = (o.across[0] + o.across[1]) / 2;
+  const at = (u, y, mesh, name) => {
+    if (o.horizontal) mesh.position.set(u, y, mid);
+    else mesh.position.set(mid, y, u);
+    mesh.name = name;
+    mesh.castShadow = true;
+    group.add(mesh);
+  };
+  const top = o.rail - GRILL_RAIL.height;
+  const rail = o.horizontal
+    ? new THREE.BoxGeometry(e - s, GRILL_RAIL.height, GRILL_RAIL.width)
+    : new THREE.BoxGeometry(GRILL_RAIL.width, GRILL_RAIL.height, e - s);
+  at((s + e) / 2, top + GRILL_RAIL.height / 2, new THREE.Mesh(rail, metalMat), "handrail");
+
+  const bar = new THREE.BoxGeometry(GRILL_BAR, top - o.sill, GRILL_BAR);
+  const n = Math.round((e - s) / GRILL_PITCH);
+  for (let k = 0; k < n; k++) {
+    at(s + ((k + 0.5) * (e - s)) / n, (o.sill + top) / 2, new THREE.Mesh(bar, metalMat), "bar");
+  }
+  return group;
+}
+
+// Sliding door: two panels on two tracks, frosted or clear. If the opening
+// runs to the ceiling, a fixed transom light fills it above door height. The
+// panel at the `e` end slides over the other.
 const SD_FRAME = 0.04;
 const SD_DEPTH = 0.07;
 const SD_STILE = 0.05;
@@ -198,14 +231,16 @@ function buildSlidingDoor(o) {
   group.name = `sliding_door_${o.slide}`;
   const frame = new THREE.MeshStandardMaterial({ color: 0x2c2d2f, metalness: 0.4, roughness: 0.4 });
   const frosted = new THREE.MeshStandardMaterial({
-    color: 0xf2f5f5,
+    color: o.clear ? 0xd6e8ea : 0xf2f5f5,
     transparent: true,
-    opacity: 0.6,
-    roughness: 0.7,
+    opacity: o.clear ? 0.18 : 0.6,
+    roughness: o.clear ? 0.05 : 0.7,
     depthWrite: false,
   });
   frame.name = "door_frame";
-  frosted.name = "frosted_glass";
+  frosted.name = o.clear ? "glass" : "frosted_glass";
+  const top = o.height;
+  const transom = top > DOOR_HEIGHT + 0.3; // room for a fixed light above the panels
   const [s, e] = o.along;
   const mid = (o.across[0] + o.across[1]) / 2;
 
@@ -223,17 +258,19 @@ function buildSlidingDoor(o) {
 
   // Outer frame, transom bar, floor track, fixed transom glass
   const [d0, d1] = [mid - SD_DEPTH / 2, mid + SD_DEPTH / 2];
-  box(group, s, s + SD_FRAME, 0, WALL_HEIGHT, d0, d1, frame, "jamb");
-  box(group, e - SD_FRAME, e, 0, WALL_HEIGHT, d0, d1, frame, "jamb");
-  box(group, s, e, WALL_HEIGHT - SD_FRAME, WALL_HEIGHT, d0, d1, frame, "head");
-  box(group, s, e, DOOR_HEIGHT - SD_FRAME / 2, DOOR_HEIGHT + SD_FRAME / 2, d0, d1, frame, "transom");
+  box(group, s, s + SD_FRAME, 0, top, d0, d1, frame, "jamb");
+  box(group, e - SD_FRAME, e, 0, top, d0, d1, frame, "jamb");
+  box(group, s, e, top - SD_FRAME, top, d0, d1, frame, "head");
   box(group, s, e, 0, 0.012, d0, d1, frame, "track");
-  box(group, s + SD_FRAME, e - SD_FRAME, DOOR_HEIGHT + SD_FRAME / 2, WALL_HEIGHT - SD_FRAME, mid - 0.003, mid + 0.003, frosted, "transom_glass");
+  if (transom) {
+    box(group, s, e, DOOR_HEIGHT - SD_FRAME / 2, DOOR_HEIGHT + SD_FRAME / 2, d0, d1, frame, "transom");
+    box(group, s + SD_FRAME, e - SD_FRAME, DOOR_HEIGHT + SD_FRAME / 2, top - SD_FRAME, mid - 0.003, mid + 0.003, frosted, "transom_glass");
+  }
 
   // Panels
   const inner = e - s - 2 * SD_FRAME;
   const pw = inner / 2 + SD_OVERLAP / 2;
-  const [y0, y1] = [0.012, DOOR_HEIGHT - SD_FRAME / 2];
+  const [y0, y1] = [0.012, transom ? DOOR_HEIGHT - SD_FRAME / 2 : top - SD_FRAME];
   const panel = (u0, w, name) => {
     const g = new THREE.Group();
     g.name = name;
